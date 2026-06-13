@@ -6,6 +6,21 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
+  "id": ".",
+  "screenshots": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
   "background_color": "#F4F6FA",
   "theme_color": "#1D9E75",
   "icons": [

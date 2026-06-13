@@ -1,0 +1,25 @@
+{
+  "name": "HACCP Manager - AFPA",
+  "short_name": "HACCP Manager",
+  "description": "Suivi HACCP de la cuisine pédagogique AFPA",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F4F6FA",
+  "theme_color": "#1D9E75",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

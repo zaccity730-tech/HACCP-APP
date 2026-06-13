@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HACCP Manager">
+<meta name="theme-color" content="#1D9E75">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>HACCP Manager — Centre de formation</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F6FA;--surface:#fff;--surface2:#F0F2F7;
+  --border:#E2E6EF;--border2:#CBD2DF;
+  --text:#1A1D24;--text2:#5A6377;--text3:#9AA3B8;
+  --green:#0F7A5A;--green-light:#E3F5EE;--green-mid:#1D9E75;
+  --red:#D93025;--red-light:#FDECEA;
+  --amber:#C87C10;--amber-light:#FEF3E2;
+  --blue:#1A6FA8;--blue-light:#E8F1FB;
+  --purple:#6B3DB5;--purple-light:#F0EBFB;
+  --radius:10px;--radius-sm:7px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.10),0 2px 4px rgba(0,0,0,0.06);
+}
+body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;color:var(--text);font-size:14px;min-height:100vh}
+.wrapper{max-width:1140px;margin:0 auto;padding:20px}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0A5C44 0%,#0F7A5A 60%,#1D9E75 100%);border-radius:14px;padding:20px 26px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(15,122,90,0.25)}
+.header-brand{display:flex;align-items:center;gap:14px}
+.header-icon{width:44px;height:44px;background:rgba(255,255,255,0.18);border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.2)}
+.header-icon i{font-size:22px;color:#fff}
+.header-name{font-size:17px;font-weight:600;color:#fff;letter-spacing:-0.02em}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.7);margin-top:2px}
+.header-right{text-align:right}
+.header-date{font-size:12px;color:rgba(255,255,255,0.65)}
+.header-time{font-size:22px;font-weight:600;color:#fff;margin-top:2px;font-variant-numeric:tabular-nums}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;box-shadow:var(--shadow)}
+.stat-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.stat-icon.g{background:var(--green-light)} .stat-icon.g i{color:var(--green-mid);font-size:15px}
+.stat-icon.r{background:var(--red-light)} .stat-icon.r i{color:var(--red);font-size:15px}
+.stat-icon.a{background:var(--amber-light)} .stat-icon.a i{color:var(--amber);font-size:15px}
+.stat-icon.b{background:var(--blue-light)} .stat-icon.b i{color:var(--blue);font-size:15px}
+.stat-val{font-size:24px;font-weight:600;letter-spacing:-0.03em}
+.stat-val.g{color:var(--green-mid)} .stat-val.r{color:var(--red)} .stat-val.a{color:var(--amber)} .stat-val.b{color:var(--blue)}
+.stat-lbl{font-size:11px;color:var(--text2);margin-top:1px}
+
+/* NAV */
+.nav-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:4px;margin-bottom:16px;display:flex;gap:3px;box-shadow:var(--shadow);overflow-x:auto}
+.nb{flex:1;padding:8px 8px;font-size:12px;font-weight:500;border:none;border-radius:var(--radius-sm);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all 0.15s;white-space:nowrap;min-width:fit-content}
+.nb:hover{background:var(--surface2);color:var(--text)}
+.nb.active{background:var(--green);color:#fff;box-shadow:0 2px 8px rgba(15,122,90,0.3)}
+.nb i{font-size:15px}
+.nc-b{background:rgba(255,255,255,0.22);font-size:10px;padding:1px 5px;border-radius:99px;font-weight:600;min-width:18px;text-align:center}
+.nb:not(.active) .nc-b{background:var(--surface2);color:var(--text2)}
+
+.sec{display:none} .sec.active{display:block}
+.panel{display:grid;grid-template-columns:360px 1fr;gap:14px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-head-l{display:flex;align-items:center;gap:8px}
+.card-head-l i{font-size:15px;color:var(--green-mid)}
+.card-title{font-size:13px;font-weight:600;color:var(--text)}
+.card-body{padding:14px 16px}
+
+/* FORM */
+.field{margin-bottom:10px}
+.field:last-of-type{margin-bottom:0}
+.field label{font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em}
+.field input,.field select,.field textarea{width:100%;font-size:13px;padding:7px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);transition:border-color 0.15s,box-shadow 0.15s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--green-mid);box-shadow:0 0 0 3px rgba(29,158,117,0.15)}
+.field textarea{resize:vertical;min-height:58px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-submit{width:100%;margin-top:12px;padding:9px;font-size:13px;font-weight:600;background:var(--green);border:none;border-radius:var(--radius-sm);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background 0.15s,transform 0.1s;box-shadow:0 2px 8px rgba(15,122,90,0.25)}
+.btn-submit:hover{background:#0A5C44}
+.btn-submit:active{transform:scale(0.98)}
+.btn-export{padding:5px 11px;font-size:12px;font-weight:500;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:5px}
+.btn-export:hover{background:var(--surface2)}
+.btn-del{width:26px;height:26px;border:1px solid #F09595;border-radius:6px;background:#FDECEA;color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.btn-del:hover{background:#FBBFBF}
+
+/* LIST */
+.list-scroll{max-height:380px;overflow-y:auto}
+.list-scroll::-webkit-scrollbar{width:4px}
+.list-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+.list-item{display:flex;align-items:flex-start;gap:9px;padding:10px 0;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.li-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.li-icon.cold{background:var(--blue-light)} .li-icon.cold i{color:var(--blue);font-size:15px}
+.li-icon.hot{background:var(--amber-light)} .li-icon.hot i{color:var(--amber);font-size:15px}
+.li-icon.fridge{background:var(--blue-light)} .li-icon.fridge i{color:var(--blue);font-size:15px}
+.li-icon.green{background:var(--green-light)} .li-icon.green i{color:var(--green-mid);font-size:15px}
+.li-icon.red{background:var(--red-light)} .li-icon.red i{color:var(--red);font-size:15px}
+.li-info{flex:1;min-width:0}
+.li-title{font-size:13px;font-weight:600;color:var(--text)}
+.li-sub{font-size:11px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-note{font-size:11px;color:var(--text3);margin-top:2px}
+.li-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.li-right-col{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.temp-val{font-size:17px;font-weight:700}
+.temp-ok{color:var(--green-mid)} .temp-err{color:var(--red)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.b-ok{background:var(--green-light);color:#085041}
+.b-warn{background:var(--amber-light);color:#7A4D0A}
+.b-err{background:var(--red-light);color:#8B1A1A}
+.b-critic{background:#2D0A0A;color:#FF9999}
+.b-info{background:var(--blue-light);color:#0C3A6E}
+.b-gray{background:var(--surface2);color:var(--text2)}
+.b-closed{background:var(--green-light);color:#085041}
+.b-open{background:var(--amber-light);color:#7A4D0A}
+.b-zone{background:var(--purple-light);color:var(--purple)}
+
+.empty{padding:36px 20px;text-align:center}
+.empty i{font-size:36px;color:var(--text3);display:block;margin-bottom:10px}
+.empty p{font-size:13px;color:var(--text2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);padding:9px 18px;border-radius:var(--radius);font-size:13px;font-weight:600;opacity:0;transition:opacity 0.25s;pointer-events:none;white-space:nowrap;z-index:9999;display:flex;align-items:center;gap:7px;box-shadow:var(--shadow-md)}
+.toast.show{opacity:1}
+.toast.ok{background:var(--green);color:#fff}
+.toast.warn{background:#D97706;color:#fff}
+.toast.err{background:var(--red);color:#fff}
+
+/* ====== CARTOGRAPHIE ====== */
+.carto-layout{display:grid;grid-template-columns:1fr 340px;gap:14px}
+.carto-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.carto-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.carto-head-l{display:flex;align-items:center;gap:8px}
+.carto-head-l i{font-size:15px;color:var(--green-mid)}
+.carto-body{padding:14px}
+
+/* SVG plan */
+.plan-wrap{position:relative;width:100%;background:#F8F9FC;border-radius:8px;border:1px solid var(--border);overflow:hidden}
+.plan-wrap svg{width:100%;height:auto;display:block}
+
+/* POINTER-EVENTS CORRIGÉ */
+.zone-area{cursor:pointer}
+.zone-area rect{pointer-events:all}
+.zone-label{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;font-weight:600;fill:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.4);pointer-events:none}
+.zone-status-dot{pointer-events:none}
+.zone-area:hover rect{opacity:0.85;filter:brightness(0.92)}
+.zone-area.selected rect{filter:brightness(0.88) drop-shadow(0 0 6px rgba(0,0,0,0.3))}
+
+/* Zone detail panel */
+.zone-detail{padding:14px 16px}
+.zone-detail-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.zone-detail-name .zone-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.zone-detail-meta{font-size:12px;color:var(--text2);margin-bottom:12px}
+.zone-actions{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.btn-zone-action{padding:6px 12px;font-size:12px;font-weight:500;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.15s}
+.btn-zone-action:hover{background:var(--surface2)}
+.btn-zone-action.primary{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-zone-action.primary:hover{background:#0A5C44}
+.zone-relevés-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px}
+.zone-relevés{max-height:240px;overflow-y:auto}
+.zone-relevé-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+.zone-relevé-item:last-child{border-bottom:none}
+.zri-left{flex:1;min-width:0}
+.zri-title{font-size:12px;font-weight:600;color:var(--text)}
+.zri-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid var(--border);background:var(--surface2)}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.legend-dot{width:10px;height:10px;border-radius:3px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:14px;padding:24px;width:440px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-title{font-size:15px;font-weight:700;color:var(--text)}
+.modal-close{width:28px;height:28px;border:none;background:var(--surface2);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.modal-close:hover{background:var(--border)}
+
+/* ====== QR CODES PAGE ====== */
+.qr-config{background:var(--blue-light);border:1px solid #B6D4EE;border-radius:var(--radius);padding:14px 16px;margin-bottom:14px}
+.qr-config-title{font-size:13px;font-weight:700;color:#0C3A6E;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.qr-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;break-inside:avoid}
+.qr-card svg{width:100%;height:auto;display:block;margin-bottom:6px}
+.qr-card-label{font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px}
+.qr-card-sub{font-size:10px;color:var(--text2)}
+.qr-zone-section{margin-bottom:18px}
+.qr-zone-section-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;padding:6px 10px;background:var(--surface2);border-radius:6px;display:flex;align-items:center;gap:6px}
+.qr-zone-section-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.qr-actions-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.qr-help{font-size:11px;color:var(--text2);margin-top:6px;line-height:1.4}
+.qr-input{font-size:12px;padding:6px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);width:100%;font-family:ui-monospace,Menlo,monospace}
+.qr-input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,168,0.15)}
+</style>
+</head>
+<body>
+<div class="wrapper">
+<div id="toast-el" class="toast ok"><i class="ti ti-check"></i><span id="toast-msg"></span></div>
+<button id="fab-btn" onclick="toggleFAB()" style="position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:#0F7A5A;border:none;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 4px 16px rgba(15,122,90,0.4);z-index:500;display:flex;align-items:center;justify-content:center;transition:all 0.2s"><i class="ti ti-plus"></i></button>
+<div id="fab-menu" style="position:fixed;bottom:86px;right:24px;display:none;flex-direction:column;gap:8px;z-index:500;align-items:flex-end">
+  <button onclick="fabAction('temp')" style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:9px 16px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:8px;white-space:nowrap"><i class="ti ti-thermometer" style="color:#2E86C1"></i> Relevé température</button>
+  <button onclick="fabAction('nettoyage')" style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:9px 16px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:8px;white-space:nowrap"><i class="ti ti-spray" style="color:#5BA85A"></i> Nettoyage</button>
+  <button onclick="fabAction('nc')" style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:9px 16px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:8px;white-space:nowrap"><i class="ti ti-alert-triangle" style="color:#D93025"></i> Non-conformité</button>
+  <button onclick="fabAction('livraison')" style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:9px 16px;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:8px;white-space:nowrap"><i class="ti ti-truck-delivery" style="color:#E07B39"></i> Livraison</button>
+</div>
+
+<!-- MODAL saisie rapide depuis carto -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">Relevé de température</div>
+      <button class="modal-close" onclick="closeModalBtn()"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-brand">
+    <div class="header-icon"><i class="ti ti-shield-check"></i></div>
+    <div>
+      <div class="header-name">HACCP Manager</div>
+      <div class="header-sub">Centre de formation — Cuisine pédagogique</div>
+    </div>
+  </div>
+  <div class="header-right" style="text-align:right">
+    <div class="header-date" id="hdr-date"></div>
+    <div class="header-time" id="hdr-time"></div>
+    <div id="hdr-freshness" style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:3px"></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-icon g"><i class="ti ti-circle-check"></i></div><div class="stat-val g" id="gs-conf">—</div><div class="stat-lbl">Relevés conformes</div></div>
+  <div class="stat"><div class="stat-icon r"><i class="ti ti-alert-triangle"></i></div><div class="stat-val r" id="gs-ko">—</div><div class="stat-lbl">Hors seuil</div></div>
+  <div class="stat"><div class="stat-icon a"><i class="ti ti-truck-delivery"></i></div><div class="stat-val a" id="gs-liv">—</div><div class="stat-lbl">Livraisons</div></div>
+  <div class="stat"><div class="stat-icon b"><i class="ti ti-clipboard-list"></i></div><div class="stat-val b" id="gs-open">—</div><div class="stat-lbl">NC ouvertes</div></div>
+</div>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <button class="nb active" onclick="show('carto',this)"><i class="ti ti-map-2"></i> Carto <span class="nc-b" id="cnt-zones">0</span></button>
+  <button class="nb" onclick="show('temp',this)"><i class="ti ti-thermometer"></i> Temp. <span class="nc-b" id="cnt-temp">0</span></button>
+  <button class="nb" onclick="show('livraison',this)"><i class="ti ti-truck-delivery"></i> Livr. <span class="nc-b" id="cnt-liv">0</span></button>
+  <button class="nb" onclick="show('tracabilite',this)"><i class="ti ti-tag"></i> Traçab. <span class="nc-b" id="cnt-trac">0</span></button>
+  <button class="nb" onclick="show('nettoyage',this)"><i class="ti ti-spray"></i> Nettoy. <span class="nc-b" id="cnt-net">0</span></button>
+  <button class="nb" onclick="show('nc',this)"><i class="ti ti-alert-triangle"></i> NC <span class="nc-b" id="cnt-nc">0</span></button>
+  <button class="nb" onclick="show('rapport',this)"><i class="ti ti-file-report"></i> Rapport</button>
+  <button class="nb" onclick="show('qrcodes',this)"><i class="ti ti-qrcode"></i> QR Codes</button>
+  <button class="nb" onclick="show('graphiques',this)"><i class="ti ti-chart-line"></i> Graph.</button>
+</div>
+<!-- ===== CARTOGRAPHIE ===== -->
+<div id="carto" class="sec active">
+  <div class="carto-layout">
+    <div class="carto-card">
+      <div class="carto-head">
+        <div class="carto-head-l"><i class="ti ti-map-2"></i><span class="card-title">Plan de la cuisine pédagogique</span></div>
+        <div style="font-size:11px;color:var(--text2)">Cliquez sur une zone</div>
+      </div>
+      <div class="carto-body">
+        <div class="plan-wrap">
+          <svg viewBox="0 0 600 420" xmlns="http://www.w3.org/2000/svg" id="plan-svg">
+            <rect x="2" y="2" width="596" height="416" rx="8" fill="#E8EBF2" stroke="#C5CBDA" stroke-width="2"/>
+            <g class="zone-area" data-zone="stockage-froid">
+              <rect x="10" y="10" width="130" height="110" rx="6" fill="#4A90D9" opacity="0.85"/>
+              <text x="75" y="55" text-anchor="middle" class="zone-label" font-size="11">❄️ Stockage</text>
+              <text x="75" y="72" text-anchor="middle" class="zone-label" font-size="11">froid</text>
+              <text x="75" y="90" text-anchor="middle" class="zone-label" font-size="10">Frigos / Congél.</text>
+              <circle class="zone-status-dot" id="dot-stockage-froid" cx="118" cy="22" r="7" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+            </g>
+            <g class="zone-area" data-zone="legumerie">
+              <rect x="148" y="10" width="130" height="110" rx="6" fill="#5BA85A" opacity="0.85"/>
+              <text x="213" y="55" text-anchor="middle" class="zone-label" font-size="11">🥦 Légumerie</text>
+              <text x="213" y="72" text-anchor="middle" class="zone-label" font-size="10">Prépa légumes</text>
+              <circle class="zone-status-dot" id="dot-legumerie" cx="266" cy="22" r="7" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+            </g>
+            <g class="zone-area" data-zone="stockage-sec">
+              <rect x="286" y="10" width="130" height="110" rx="6" fill="#9B7DC8" opacity="0.85"/>
+              <text x="351" y="55" text-anchor="middle" class="zone-label" font-size="11">📦 Stockage</text>
+              <text x="351" y="72" text-anchor="middle" class="zone-label" font-size="11">sec</text>
+              <text x="351" y="90" text-anchor="middle" class="zone-label" font-size="10">Épicerie / sec</text>
+              <circle class="zone-status-dot" id="dot-stockage-sec" cx="404" cy="22" r="7" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+            </g>
+            <g class="zone-area" data-zone="reception">
+              <rect x="424" y="10" width="168" height="110" rx="6" fill="#E07B39" opacity="0.85"/>
+              <text x="508" y="50" text-anchor="middle" class="zone-label" font-size="11">🚚 Quai de</text>
+              <text x="508" y="67" text-anchor="middle" class="zone-label" font-size="11">réception</text>
+              <text x="508" y="85" text-anchor="middle" class="zone-label" font-size="10">Contrôle livraisons</text>
+              <circle class="zone-status-dot" id="dot-reception" cx="580" cy="22" r="7" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+            </g>
+            <line x1="10" y1="128" x2="590" y2="128" stroke="#C5CBDA" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <g class="zone-area" data-zone="cuisson">
+              <rect x="10" y="135" width="240" height="145" rx="6" fill="#D94F3D" opacity="0.85"/>
+              <text x="130" y="200" text-anchor="middle" class="zone-label" font-size="13">🔥 Zone chaude</text>
+              <text x="130" y="220" text-anchor="middle" class="zone-label" font-size="11">Cuisson / Fours</text>
+              <text x="130" y="238" text-anchor="middle" class="zone-label" font-size="10">Plaques — Bain-marie</text>
+              <circle class="zone-status-dot" id="dot-cuisson" cx="238" cy="147" r="7" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+            </g>
+            <g class="zone-area" data-zone="prep-froide">
+              <rect x="258" y="135" width="190" height="145" rx="6" fill="#2E86C1" opacity="0.85"/>
+              <text x="353" y="200" text-anchor="middle" class="zone-label" font-size="12">🧊 Préparation</text>
+              <text x="353" y="218" text-anchor="middle" class="zone-label" font-size="11">froide</text>
+              <text x="353" y="236" text-anchor="middle" class="zone-label" font-size="10">Entrées / Desserts</text>
+              <circle class="zone-status-dot" id="dot-prep-froide" cx="436" cy="147" r="7" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+            </g>
+            <g class="zone-area" data-zone="distribution">
+              <rect x="456" y="135" width="136" height="145" rx="6" fill="#16A085" opacity="0.85"/>
+              <text x="524" y="198" text-anchor="middle" class="zone-label" font-size="11">🍽️ Dressage /</text>
+              <text x="524" y="215" text-anchor="middle" class="zone-label" font-size="11">Distribution</text>
+              <circle class="zone-status-dot" id="dot-distribution" cx="580" cy="147" r="7" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+            </g>
+            <line x1="10" y1="288" x2="590" y2="288" stroke="#C5CBDA" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <g class="zone-area" data-zone="plonge">
+              <rect x="10" y="295" width="190" height="118" rx="6" fill="#5D6D7E" opacity="0.85"/>
+              <text x="105" y="348" text-anchor="middle" class="zone-label" font-size="12">🧹 Plonge</text>
+              <text x="105" y="366" text-anchor="middle" class="zone-label" font-size="10">Vaisselle / Nettoyage</text>
+              <circle class="zone-status-dot" id="dot-plonge" cx="188" cy="307" r="7" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+            </g>
+            <g class="zone-area" data-zone="salle">
+              <rect x="208" y="295" width="240" height="118" rx="6" fill="#7D6608" opacity="0.85"/>
+              <text x="328" y="348" text-anchor="middle" class="zone-label" font-size="12">📚 Salle de</text>
+              <text x="328" y="366" text-anchor="middle" class="zone-label" font-size="10">formation</text>
+              <circle class="zone-status-dot" id="dot-salle" cx="436" cy="307" r="7" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+            </g>
+            <g class="zone-area" data-zone="vestiaires">
+              <rect x="456" y="295" width="136" height="118" rx="6" fill="#884EA0" opacity="0.85"/>
+              <text x="524" y="348" text-anchor="middle" class="zone-label" font-size="11">🚿 Vestiaires</text>
+              <text x="524" y="365" text-anchor="middle" class="zone-label" font-size="10">Sanitaires</text>
+              <circle class="zone-status-dot" id="dot-vestiaires" cx="580" cy="307" r="7" fill="#1D9E75" stroke="white" stroke-width="1.5"/>
+            </g>
+          </svg>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#1D9E75"></div>Conforme</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#E24B4A"></div>Non conforme</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#C87C10"></div>À surveiller</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#9AA3B8"></div>Non renseigné</div>
+        </div>
+      </div>
+    </div>
+    <div class="carto-card">
+      <div class="carto-head">
+        <div class="carto-head-l"><i class="ti ti-layout-sidebar-right"></i><span class="card-title">Détail de la zone</span></div>
+      </div>
+      <div id="zone-detail-panel">
+        <div class="zone-detail">
+          <div style="text-align:center;padding:40px 20px">
+            <i class="ti ti-hand-click" style="font-size:38px;color:var(--text3);display:block;margin-bottom:12px"></i>
+            <p style="font-size:13px;color:var(--text2)">Cliquez sur une zone du plan<br>pour voir les relevés et saisir</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPÉRATURES -->
+<div id="temp" class="sec">
+  <div class="panel">
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-plus"></i><span class="card-title">Nouveau relevé</span></div></div>
+      <div class="card-body">
+        <div class="field"><label>Zone</label>
+          <select id="t-zone" onchange="updateEquipByZone()">
+            <option value="">— Toutes zones —</option>
+            <option value="stockage-froid">❄️ Stockage froid</option>
+            <option value="legumerie">🥦 Légumerie</option>
+            <option value="stockage-sec">📦 Stockage sec</option>
+            <option value="reception">🚚 Quai de réception</option>
+            <option value="cuisson">🔥 Zone chaude / Cuisson</option>
+            <option value="prep-froide">🧊 Préparation froide</option>
+            <option value="distribution">🍽️ Dressage / Distribution</option>
+            <option value="plonge">🧹 Plonge</option>
+            <option value="salle">📚 Salle de formation</option>
+            <option value="vestiaires">🚿 Vestiaires / Sanitaires</option>
+          </select>
+        </div>
+        <div class="field"><label>Équipement</label>
+          <select id="t-equip">
+            <option>Réfrigérateur 1</option><option>Réfrigérateur 2</option>
+            <option>Congélateur</option><option>Chambre froide positive</option>
+            <option>Chambre froide négative</option><option>Bain-marie</option>
+            <option>Four</option><option>Plan de travail</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Température (°C)</label><input type="number" id="t-val" step="0.1" placeholder="ex: 3.5"></div>
+          <div class="field"><label>Heure</label><input type="time" id="t-heure"></div>
+        </div>
+        <div class="field"><label>Agent</label><input type="text" id="t-agent" placeholder="Nom / prénom"></div>
+        <button class="btn-submit" onclick="addTemp()"><i class="ti ti-check"></i> Enregistrer le relevé</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-l"><i class="ti ti-list"></i><span class="card-title">Relevés</span></div>
+        <div style="display:flex;gap:6px">
+          <input type="text" id="t-search" oninput="renderTemp()" placeholder="🔍 Rechercher..." style="font-size:12px;padding:4px 9px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);width:130px">
+          <select id="t-filter-zone" onchange="renderTemp()" style="font-size:12px;padding:4px 8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text2)">
+            <option value="">Toutes zones</option>
+            <option value="stockage-froid">Stockage froid</option>
+            <option value="legumerie">Légumerie</option>
+            <option value="cuisson">Cuisson</option>
+            <option value="prep-froide">Prépa froide</option>
+            <option value="distribution">Distribution</option>
+            <option value="plonge">Plonge</option>
+            <option value="reception">Réception</option>
+            <option value="stockage-sec">Stockage sec</option>
+            <option value="salle">Salle</option>
+            <option value="vestiaires">Vestiaires</option>
+          </select>
+          <button class="btn-export" onclick="exportCSV('temp')"><i class="ti ti-download"></i> CSV</button>
+        </div>
+      </div>
+      <div class="card-body list-scroll" id="t-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIVRAISONS -->
+<div id="livraison" class="sec">
+  <div class="panel">
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-plus"></i><span class="card-title">Contrôle réception</span></div></div>
+      <div class="card-body">
+        <div class="field-row">
+          <div class="field"><label>Fournisseur</label><input type="text" id="l-fourn" placeholder="ex: Metro, Pomona"></div>
+          <div class="field"><label>N° BL</label><input type="text" id="l-bon" placeholder="BL-001"></div>
+        </div>
+        <div class="field"><label>Produit / catégorie</label><input type="text" id="l-produit" placeholder="ex: viandes, laitiers"></div>
+        <div class="field-row">
+          <div class="field"><label>Température (°C)</label><input type="number" id="l-temp" step="0.1" placeholder="4.2"></div>
+          <div class="field"><label>État</label>
+            <select id="l-etat"><option value="ok">Conforme</option><option value="warn">Réserve</option><option value="err">Refusé</option></select>
+          </div>
+        </div>
+        <div class="field"><label>Observations</label><textarea id="l-obs" placeholder="Remarques…"></textarea></div>
+        <button class="btn-submit" onclick="addLivraison()"><i class="ti ti-check"></i> Enregistrer</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-list"></i><span class="card-title">Historique</span></div><button class="btn-export" onclick="exportCSV('livraison')"><i class="ti ti-download"></i> CSV</button></div>
+      <div class="card-body list-scroll" id="l-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRAÇABILITÉ -->
+<div id="tracabilite" class="sec">
+  <div class="panel">
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-plus"></i><span class="card-title">Enregistrer un lot</span></div></div>
+      <div class="card-body">
+        <div class="field"><label>Dénomination du plat</label><input type="text" id="tr-nom" placeholder="ex: Poulet rôti pommes vapeur"></div>
+        <div class="field-row">
+          <div class="field"><label>Portions</label><input type="number" id="tr-qte" placeholder="24"></div>
+          <div class="field"><label>Temp. service (°C)</label><input type="number" id="tr-temp" step="0.1" placeholder="65"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Date fabrication</label><input type="date" id="tr-fab"></div>
+          <div class="field"><label>DLC</label><input type="date" id="tr-dlc"></div>
+        </div>
+        <div class="field"><label>Zone de préparation</label>
+          <select id="tr-zone">
+            <option value="cuisson">🔥 Zone chaude / Cuisson</option>
+            <option value="prep-froide">🧊 Préparation froide</option>
+            <option value="legumerie">🥦 Légumerie</option>
+            <option value="distribution">🍽️ Distribution</option>
+          </select>
+        </div>
+        <div class="field"><label>Responsable</label><input type="text" id="tr-resp" placeholder="Formateur / stagiaire"></div>
+        <div class="field"><label>Photo (optionnel)</label>
+          <input type="file" id="tr-photo" accept="image/*" capture="environment" onchange="handlePhoto(this,'tr')" style="display:none">
+          <button type="button" class="btn-export" onclick="document.getElementById('tr-photo').click()"><i class="ti ti-camera"></i> Prendre / choisir une photo</button>
+          <div id="tr-photo-preview" style="margin-top:6px"></div>
+        </div>
+        <button class="btn-submit" onclick="addTracabilite()"><i class="ti ti-check"></i> Enregistrer le lot</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-list"></i><span class="card-title">Lots en cours</span></div><button class="btn-export" onclick="exportCSV('tracabilite')"><i class="ti ti-download"></i> CSV</button></div>
+      <div class="card-body list-scroll" id="tr-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NETTOYAGE -->
+<div id="nettoyage" class="sec">
+  <div class="panel">
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-plus"></i><span class="card-title">Opération de nettoyage</span></div></div>
+      <div class="card-body">
+        <div class="field"><label>Zone</label>
+          <select id="n-zone">
+            <option value="cuisson">🔥 Zone chaude / Cuisson</option>
+            <option value="prep-froide">🧊 Préparation froide</option>
+            <option value="legumerie">🥦 Légumerie</option>
+            <option value="stockage-froid">❄️ Stockage froid</option>
+            <option value="stockage-sec">📦 Stockage sec</option>
+            <option value="distribution">🍽️ Distribution</option>
+            <option value="plonge">🧹 Plonge</option>
+            <option value="reception">🚚 Réception</option>
+            <option value="salle">📚 Salle de formation</option>
+            <option value="vestiaires">🚿 Vestiaires / Sanitaires</option>
+          </select>
+        </div>
+        <div class="field"><label>Équipement / surface</label><input type="text" id="n-equip" placeholder="ex: Plans de travail, hotte, sol…"></div>
+        <div class="field"><label>Produit utilisé</label><input type="text" id="n-produit" placeholder="ex: Javel 0.5%, Détergent alcalin"></div>
+        <div class="field-row">
+          <div class="field"><label>Agent</label><input type="text" id="n-agent" placeholder="Nom"></div>
+          <div class="field"><label>Heure</label><input type="time" id="n-heure"></div>
+        </div>
+        <div class="field"><label>Résultat</label>
+          <select id="n-result"><option value="ok">Conforme — zone propre</option><option value="warn">Acceptable — à surveiller</option><option value="err">Non conforme — à refaire</option></select>
+        </div>
+        <div class="field"><label>Photo (optionnel)</label>
+          <input type="file" id="n-photo" accept="image/*" capture="environment" onchange="handlePhoto(this,'n')" style="display:none">
+          <button type="button" class="btn-export" onclick="document.getElementById('n-photo').click()"><i class="ti ti-camera"></i> Prendre / choisir une photo</button>
+          <div id="n-photo-preview" style="margin-top:6px"></div>
+        </div>
+        <button class="btn-submit" onclick="addNettoyage()"><i class="ti ti-check"></i> Enregistrer</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-list"></i><span class="card-title">Plan de maîtrise</span></div><button class="btn-export" onclick="exportCSV('nettoyage')"><i class="ti ti-download"></i> CSV</button></div>
+      <div class="card-body list-scroll" id="n-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NON-CONFORMITÉS -->
+<div id="nc" class="sec">
+  <div class="panel">
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-plus"></i><span class="card-title">Déclarer une NC</span></div></div>
+      <div class="card-body">
+        <div class="field"><label>Zone concernée</label>
+          <select id="nc-zone">
+            <option value="">— Toutes zones —</option>
+            <option value="stockage-froid">❄️ Stockage froid</option>
+            <option value="legumerie">🥦 Légumerie</option>
+            <option value="stockage-sec">📦 Stockage sec</option>
+            <option value="reception">🚚 Réception</option>
+            <option value="cuisson">🔥 Zone chaude / Cuisson</option>
+            <option value="prep-froide">🧊 Préparation froide</option>
+            <option value="distribution">🍽️ Distribution</option>
+            <option value="plonge">🧹 Plonge</option>
+            <option value="salle">📚 Salle de formation</option>
+            <option value="vestiaires">🚿 Vestiaires / Sanitaires</option>
+          </select>
+        </div>
+        <div class="field"><label>Type</label>
+          <select id="nc-type"><option>Température hors seuil</option><option>DLC dépassée</option><option>Livraison refusée</option><option>Rupture de traçabilité</option><option>Contamination croisée</option><option>Non-respect procédure nettoyage</option><option>Autre</option></select>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Gravité</label><select id="nc-grav"><option value="warn">Mineure</option><option value="err">Majeure</option><option value="critic">Critique</option></select></div>
+          <div class="field"><label>Statut</label><select id="nc-statut" onchange="if(this.value==='closed'&&!checkFormateurPin())this.value='open'"><option value="open">Ouverte</option><option value="closed">Clôturée</option></select></div>
+        </div>
+        <div class="field"><label>Description</label><textarea id="nc-desc" placeholder="Décrire la non-conformité…"></textarea></div>
+        <div class="field"><label>Action corrective</label><textarea id="nc-action" placeholder="ex: Produit écarté, température recorrigée…"></textarea></div>
+        <div class="field"><label>Déclaré par</label><input type="text" id="nc-agent" placeholder="Nom"></div>
+        <div class="field"><label>Photo (optionnel)</label>
+          <input type="file" id="nc-photo" accept="image/*" capture="environment" onchange="handlePhoto(this,'nc')" style="display:none">
+          <button type="button" class="btn-export" onclick="document.getElementById('nc-photo').click()"><i class="ti ti-camera"></i> Prendre / choisir une photo</button>
+          <div id="nc-photo-preview" style="margin-top:6px"></div>
+        </div>
+        <button class="btn-submit" onclick="addNC()"><i class="ti ti-alert-triangle"></i> Déclarer la NC</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-list"></i><span class="card-title">Registre des NC</span></div><div style="display:flex;gap:6px"><input type="text" id="nc-search" oninput="renderNC()" placeholder="🔍 Rechercher..." style="font-size:12px;padding:4px 9px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);width:130px"><button class="btn-export" onclick="exportCSV('nc')"><i class="ti ti-download"></i> CSV</button></div></div>
+      <div class="card-body list-scroll" id="nc-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RAPPORT AUDIT -->
+<div id="rapport" class="sec">
+
+  <!-- Paramètres audit -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-head">
+      <div class="card-head-l"><i class="ti ti-clipboard-check"></i><span class="card-title">Rapport d'audit HACCP</span></div>
+    </div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+        <div class="field"><label>Période — du</label><input type="date" id="audit-from"></div>
+        <div class="field"><label>Au</label><input type="date" id="audit-to"></div>
+        <div class="field"><label>Auditeur</label><input type="text" id="audit-name" placeholder="Nom de l'auditeur"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="field"><label>Établissement</label><input type="text" id="audit-etab" placeholder="Nom du centre de formation" value="Centre de formation AFPA"></div>
+        <div class="field"><label>Référence audit</label><input type="text" id="audit-ref" placeholder="ex: AUDIT-2024-001"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-submit" style="width:auto;margin:0;flex:1" onclick="genAudit()"><i class="ti ti-refresh"></i> Générer le rapport d'audit</button>
+        <button class="btn-submit" style="width:auto;margin:0;padding:9px 16px;background:#1A6FA8" onclick="printAudit()"><i class="ti ti-file-type-pdf"></i> Exporter PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aperçu rapport -->
+  <div class="card" id="audit-preview-card" style="display:none">
+    <div class="card-head">
+      <div class="card-head-l"><i class="ti ti-eye"></i><span class="card-title">Aperçu du rapport</span></div>
+      <button class="btn-submit" style="width:auto;margin:0;padding:6px 14px;font-size:12px" onclick="printAudit()"><i class="ti ti-file-type-pdf"></i> PDF</button>
+    </div>
+    <div class="card-body" id="audit-body" style="padding:0"></div>
+  </div>
+
+  <!-- Sauvegarde / Mode formateur -->
+  <div class="card" style="margin-top:14px">
+    <div class="card-head"><div class="card-head-l"><i class="ti ti-settings"></i><span class="card-title">Sauvegarde &amp; Mode formateur</span></div></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">Sauvegarde / Restauration</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Exporte toutes les données de l'application (relevés, NC, photos, lots…) dans un seul fichier, ou restaure une sauvegarde précédente.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn-export" onclick="exportBackup()"><i class="ti ti-download"></i> Exporter une sauvegarde</button>
+            <input type="file" id="backup-file" accept=".json" style="display:none" onchange="importBackup(this)">
+            <button class="btn-export" onclick="document.getElementById('backup-file').click()"><i class="ti ti-upload"></i> Restaurer une sauvegarde</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">Mode formateur</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Un code formateur permet de clôturer les non-conformités. Laisser vide pour désactiver.</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="password" id="formateur-pin" class="qr-input" placeholder="Code formateur (ex: 1234)" style="max-width:180px">
+            <button class="btn-export" onclick="saveFormateurPin()"><i class="ti ti-check"></i> Enregistrer</button>
+          </div>
+          <div id="formateur-status" style="font-size:12px;margin-top:6px;color:var(--text2)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Signatures -->
+  <div class="card" style="margin-top:14px">
+    <div class="card-head"><div class="card-head-l"><i class="ti ti-writing"></i><span class="card-title">Signatures électroniques</span></div></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">Formateur responsable</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Signature du jour : <span id="sig-date-label" style="color:var(--text);font-weight:500"></span></div>
+          <canvas id="sig-canvas-1" width="320" height="120" style="border:1px solid var(--border2);border-radius:var(--radius-sm);background:#FAFBFD;cursor:crosshair;display:block;touch-action:none"></canvas>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <input type="text" id="sig-name-1" placeholder="Nom du signataire" style="flex:1;font-size:12px;padding:6px 9px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text)">
+            <button class="btn-export" onclick="clearSig(1)"><i class="ti ti-eraser"></i> Effacer</button>
+            <button class="btn-submit" style="width:auto;margin:0;padding:6px 12px;font-size:12px" onclick="saveSig(1)"><i class="ti ti-check"></i> Valider</button>
+          </div>
+          <div id="sig-status-1" style="font-size:12px;margin-top:6px;color:var(--text2)"></div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">Auditeur / Vérificateur</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:8px">&nbsp;</div>
+          <canvas id="sig-canvas-2" width="320" height="120" style="border:1px solid var(--border2);border-radius:var(--radius-sm);background:#FAFBFD;cursor:crosshair;display:block;touch-action:none"></canvas>
+          <div style="display:flex;gap:6px;margin-top:8px">
+            <input type="text" id="sig-name-2" placeholder="Nom de l'auditeur" style="flex:1;font-size:12px;padding:6px 9px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text)">
+            <button class="btn-export" onclick="clearSig(2)"><i class="ti ti-eraser"></i> Effacer</button>
+            <button class="btn-submit" style="width:auto;margin:0;padding:6px 12px;font-size:12px" onclick="saveSig(2)"><i class="ti ti-check"></i> Valider</button>
+          </div>
+          <div id="sig-status-2" style="font-size:12px;margin-top:6px;color:var(--text2)"></div>
+        </div>
+      </div>
+      <div id="sigs-saved" style="margin-top:14px"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrapper -->
+
+<!-- ===== QR CODES ===== -->
+<div id="qrcodes" class="sec" style="max-width:1140px;margin:0 auto;padding:0 20px 20px">
+  <div class="qr-config">
+    <div class="qr-config-title"><i class="ti ti-info-circle"></i> Configuration de l'URL de base</div>
+    <div style="font-size:12px;color:var(--text);margin-bottom:6px">Cette URL sera encodée dans tous les QR codes. Quand un utilisateur les scanne, l'app s'ouvre directement sur la bonne zone et la bonne action.</div>
+    <input type="text" id="qr-base-url" class="qr-input" placeholder="https://cuisine.formation.fr/app/">
+    <div class="qr-help">💡 Pour tester en local, vous pouvez utiliser l'URL du fichier ouvert, ex. <code>file:///C:/Users/.../haccp.html</code>. Pensez à ajouter <code>?</code> à la fin si nécessaire.</div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn-export" onclick="saveQRSettings()"><i class="ti ti-device-floppy"></i> Enregistrer l'URL</button>
+      <button class="btn-export" onclick="loadQRPage()"><i class="ti ti-refresh"></i> Régénérer les QR</button>
+    </div>
+  </div>
+
+  <div class="qr-actions-bar">
+    <button class="btn-submit" style="width:auto;margin:0;padding:8px 14px" onclick="printQRCodes()"><i class="ti ti-printer"></i> Imprimer tous les QR (A4)</button>
+    <button class="btn-export" onclick="window.print()"><i class="ti ti-download"></i> Exporter en PDF</button>
+    <div style="margin-left:auto;font-size:12px;color:var(--text2);align-self:center">📱 Scannez un QR avec votre smartphone pour tester</div>
+  </div>
+
+  <div id="qr-grid"></div>
+</div>
+
+<!-- GRAPHIQUES -->
+<div id="graphiques" class="sec">
+  <div id="alerte-banner" style="background:#FDECEA;border:1px solid #F09595;border-radius:var(--radius);padding:12px 16px;margin-bottom:14px;display:none;align-items:center;gap:12px">
+    <div style="width:36px;height:36px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:pulse 1s infinite">
+      <i class="ti ti-alert-triangle" style="color:#fff;font-size:18px"></i>
+    </div>
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:700;color:var(--red)" id="alerte-titre">⚠️ Température hors seuil détectée</div>
+      <div style="font-size:12px;color:#8B1A1A;margin-top:2px" id="alerte-detail"></div>
+    </div>
+    <button onclick="dismissAlerte()" style="border:none;background:transparent;color:var(--red);cursor:pointer;font-size:20px;padding:4px"><i class="ti ti-x"></i></button>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-head">
+      <div class="card-head-l"><i class="ti ti-bell"></i><span class="card-title">Rappels de saisie</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:12px;color:var(--text2)">Intervalle :</span>
+        <select id="rappel-interval" onchange="updateRappels()" style="font-size:12px;padding:4px 8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text)">
+          <option value="60">1h</option><option value="120">2h</option><option value="180">3h</option><option value="240">4h</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+          <input type="checkbox" id="rappel-active" onchange="toggleRappels()" style="accent-color:var(--green-mid)"> Activer
+        </label>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="rappel-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px"></div>
+      <div id="rappel-status" style="font-size:12px;color:var(--text2);margin-top:10px;text-align:center"></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-l"><i class="ti ti-chart-line"></i><span class="card-title">Températures — 7 jours</span></div>
+        <select id="graph-equip" onchange="drawGraphTemp()" style="font-size:12px;padding:4px 8px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text)">
+          <option value="">Tous équipements</option>
+          <option>Réfrigérateur 1</option><option>Réfrigérateur 2</option>
+          <option>Congélateur</option><option>Chambre froide positive</option>
+          <option>Chambre froide négative</option><option>Bain-marie</option>
+        </select>
+      </div>
+      <div class="card-body" style="padding:10px">
+        <canvas id="graph-temp" height="200" style="width:100%"></canvas>
+        <div id="graph-temp-empty" style="display:none;text-align:center;padding:40px;color:var(--text2);font-size:13px"><i class="ti ti-chart-line" style="font-size:28px;display:block;margin-bottom:8px;color:var(--text3)"></i>Pas encore de données</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-chart-bar"></i><span class="card-title">Conformité par zone</span></div></div>
+      <div class="card-body" style="padding:10px">
+        <canvas id="graph-zones" height="200" style="width:100%"></canvas>
+        <div id="graph-zones-empty" style="display:none;text-align:center;padding:40px;color:var(--text2);font-size:13px"><i class="ti ti-chart-bar" style="font-size:28px;display:block;margin-bottom:8px;color:var(--text3)"></i>Pas encore de données</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-chart-donut"></i><span class="card-title">Statut NC</span></div></div>
+      <div class="card-body" style="padding:10px;display:flex;align-items:center;gap:16px">
+        <canvas id="graph-nc" width="160" height="160" style="flex-shrink:0"></canvas>
+        <div id="graph-nc-legend" style="font-size:12px;color:var(--text2)"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-head-l"><i class="ti ti-activity"></i><span class="card-title">Activité 7 jours</span></div></div>
+      <div class="card-body" style="padding:10px">
+        <canvas id="graph-activite" height="160" style="width:100%"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style id="print-styles">
+@media print {
+  body{background:#fff!important;font-size:11px}
+  .header,.stats,.nav-wrap,.btn-submit,.btn-export,.btn-del,.btn-zone-action,.modal-overlay,.qr-config,.qr-actions-bar{display:none!important}
+  .wrapper{max-width:100%;padding:0}
+  .sec{display:none!important}
+  #rapport{display:block!important}
+  #qrcodes{display:block!important;max-width:100%!important;padding:0!important}
+  .qr-card{break-inside:avoid;page-break-inside:avoid;border:1px solid #999!important;padding:8px!important}
+  .card{box-shadow:none!important;border:1px solid #ccc!important;break-inside:avoid}
+  canvas{max-width:100%}
+  .no-print{display:none!important}
+}
+#rapport-print-header{display:none}
+</style>
+<!-- ===== QR CODE LIB (CDN, ~5 Ko) ===== -->
+<script>
+/*! qrcode-svg v1.1.0 | https://github.com/papnkukn/qrcode-svg | MIT license */
+function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedData=[];for(var e=0,r=this.data.length;e<r;e++){var o=[],n=this.data.charCodeAt(e);n>65536?(o[0]=240|(1835008&n)>>>18,o[1]=128|(258048&n)>>>12,o[2]=128|(4032&n)>>>6,o[3]=128|63&n):n>2048?(o[0]=224|(61440&n)>>>12,o[1]=128|(4032&n)>>>6,o[2]=128|63&n):n>128?(o[0]=192|(1984&n)>>>6,o[1]=128|63&n):o[0]=n,this.parsedData.push(o)}this.parsedData=Array.prototype.concat.apply([],this.parsedData),this.parsedData.length!=this.data.length&&(this.parsedData.unshift(191),this.parsedData.unshift(187),this.parsedData.unshift(239))}function QRCodeModel(t,e){this.typeNumber=t,this.errorCorrectLevel=e,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}QR8bitByte.prototype={getLength:function(t){return this.parsedData.length},write:function(t){for(var e=0,r=this.parsedData.length;e<r;e++)t.put(this.parsedData[e],8)}},QRCodeModel.prototype={addData:function(t){var e=new QR8bitByte(t);this.dataList.push(e),this.dataCache=null},isDark:function(t,e){if(t<0||this.moduleCount<=t||e<0||this.moduleCount<=e)throw new Error(t+","+e);return this.modules[t][e]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(t,e){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var r=0;r<this.moduleCount;r++){this.modules[r]=new Array(this.moduleCount);for(var o=0;o<this.moduleCount;o++)this.modules[r][o]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(t,e),this.typeNumber>=7&&this.setupTypeNumber(t),null==this.dataCache&&(this.dataCache=QRCodeModel.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,e)},setupPositionProbePattern:function(t,e){for(var r=-1;r<=7;r++)if(!(t+r<=-1||this.moduleCount<=t+r))for(var o=-1;o<=7;o++)e+o<=-1||this.moduleCount<=e+o||(this.modules[t+r][e+o]=0<=r&&r<=6&&(0==o||6==o)||0<=o&&o<=6&&(0==r||6==r)||2<=r&&r<=4&&2<=o&&o<=4)},getBestMaskPattern:function(){for(var t=0,e=0,r=0;r<8;r++){this.makeImpl(!0,r);var o=QRUtil.getLostPoint(this);(0==r||t>o)&&(t=o,e=r)}return e},createMovieClip:function(t,e,r){var o=t.createEmptyMovieClip(e,r);this.make();for(var n=0;n<this.modules.length;n++)for(var i=1*n,a=0;a<this.modules[n].length;a++){var s=1*a;this.modules[n][a]&&(o.beginFill(0,100),o.moveTo(s,i),o.lineTo(s+1,i),o.lineTo(s+1,i+1),o.lineTo(s,i+1),o.endFill())}return o},setupTimingPattern:function(){for(var t=8;t<this.moduleCount-8;t++)null==this.modules[t][6]&&(this.modules[t][6]=t%2==0);for(var e=8;e<this.moduleCount-8;e++)null==this.modules[6][e]&&(this.modules[6][e]=e%2==0)},setupPositionAdjustPattern:function(){for(var t=QRUtil.getPatternPosition(this.typeNumber),e=0;e<t.length;e++)for(var r=0;r<t.length;r++){var o=t[e],n=t[r];if(null==this.modules[o][n])for(var i=-2;i<=2;i++)for(var a=-2;a<=2;a++)this.modules[o+i][n+a]=-2==i||2==i||-2==a||2==a||0==i&&0==a}},setupTypeNumber:function(t){for(var e=QRUtil.getBCHTypeNumber(this.typeNumber),r=0;r<18;r++){var o=!t&&1==(e>>r&1);this.modules[Math.floor(r/3)][r%3+this.moduleCount-8-3]=o}for(r=0;r<18;r++){o=!t&&1==(e>>r&1);this.modules[r%3+this.moduleCount-8-3][Math.floor(r/3)]=o}},setupTypeInfo:function(t,e){for(var r=this.errorCorrectLevel<<3|e,o=QRUtil.getBCHTypeInfo(r),n=0;n<15;n++){var i=!t&&1==(o>>n&1);n<6?this.modules[n][8]=i:n<8?this.modules[n+1][8]=i:this.modules[this.moduleCount-15+n][8]=i}for(n=0;n<15;n++){i=!t&&1==(o>>n&1);n<8?this.modules[8][this.moduleCount-n-1]=i:n<9?this.modules[8][15-n-1+1]=i:this.modules[8][15-n-1]=i}this.modules[this.moduleCount-8][8]=!t},mapData:function(t,e){for(var r=-1,o=this.moduleCount-1,n=7,i=0,a=this.moduleCount-1;a>0;a-=2)for(6==a&&a--;;){for(var s=0;s<2;s++)if(null==this.modules[o][a-s]){var h=!1;i<t.length&&(h=1==(t[i]>>>n&1)),QRUtil.getMask(e,o,a-s)&&(h=!h),this.modules[o][a-s]=h,-1==--n&&(i++,n=7)}if((o+=r)<0||this.moduleCount<=o){o-=r,r=-r;break}}}},QRCodeModel.PAD0=236,QRCodeModel.PAD1=17,QRCodeModel.createData=function(t,e,r){for(var o=QRRSBlock.getRSBlocks(t,e),n=new QRBitBuffer,i=0;i<r.length;i++){var a=r[i];n.put(a.mode,4),n.put(a.getLength(),QRUtil.getLengthInBits(a.mode,t)),a.write(n)}var s=0;for(i=0;i<o.length;i++)s+=o[i].dataCount;if(n.getLengthInBits()>8*s)throw new Error("code length overflow. ("+n.getLengthInBits()+">"+8*s+")");for(n.getLengthInBits()+4<=8*s&&n.put(0,4);n.getLengthInBits()%8!=0;)n.putBit(!1);for(;!(n.getLengthInBits()>=8*s||(n.put(QRCodeModel.PAD0,8),n.getLengthInBits()>=8*s));)n.put(QRCodeModel.PAD1,8);return QRCodeModel.createBytes(n,o)},QRCodeModel.createBytes=function(t,e){for(var r=0,o=0,n=0,i=new Array(e.length),a=new Array(e.length),s=0;s<e.length;s++){var h=e[s].dataCount,l=e[s].totalCount-h;o=Math.max(o,h),n=Math.max(n,l),i[s]=new Array(h);for(var u=0;u<i[s].length;u++)i[s][u]=255&t.buffer[u+r];r+=h;var g=QRUtil.getErrorCorrectPolynomial(l),d=new QRPolynomial(i[s],g.getLength()-1).mod(g);a[s]=new Array(g.getLength()-1);for(u=0;u<a[s].length;u++){var f=u+d.getLength()-a[s].length;a[s][u]=f>=0?d.get(f):0}}var c=0;for(u=0;u<e.length;u++)c+=e[u].totalCount;var R=new Array(c),p=0;for(u=0;u<o;u++)for(s=0;s<e.length;s++)u<i[s].length&&(R[p++]=i[s][u]);for(u=0;u<n;u++)for(s=0;s<e.length;s++)u<a[s].length&&(R[p++]=a[s][u]);return R};for(var QRMode={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},QRErrorCorrectLevel={L:1,M:0,Q:3,H:2},QRMaskPattern={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},QRUtil={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(t){for(var e=t<<10;QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G15)>=0;)e^=QRUtil.G15<<QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G15);return(t<<10|e)^QRUtil.G15_MASK},getBCHTypeNumber:function(t){for(var e=t<<12;QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G18)>=0;)e^=QRUtil.G18<<QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G18);return t<<12|e},getBCHDigit:function(t){for(var e=0;0!=t;)e++,t>>>=1;return e},getPatternPosition:function(t){return QRUtil.PATTERN_POSITION_TABLE[t-1]},getMask:function(t,e,r){switch(t){case QRMaskPattern.PATTERN000:return(e+r)%2==0;case QRMaskPattern.PATTERN001:return e%2==0;case QRMaskPattern.PATTERN010:return r%3==0;case QRMaskPattern.PATTERN011:return(e+r)%3==0;case QRMaskPattern.PATTERN100:return(Math.floor(e/2)+Math.floor(r/3))%2==0;case QRMaskPattern.PATTERN101:return e*r%2+e*r%3==0;case QRMaskPattern.PATTERN110:return(e*r%2+e*r%3)%2==0;case QRMaskPattern.PATTERN111:return(e*r%3+(e+r)%2)%2==0;default:throw new Error("bad maskPattern:"+t)}},getErrorCorrectPolynomial:function(t){for(var e=new QRPolynomial([1],0),r=0;r<t;r++)e=e.multiply(new QRPolynomial([1,QRMath.gexp(r)],0));return e},getLengthInBits:function(t,e){if(1<=e&&e<10)switch(t){case QRMode.MODE_NUMBER:return 10;case QRMode.MODE_ALPHA_NUM:return 9;case QRMode.MODE_8BIT_BYTE:case QRMode.MODE_KANJI:return 8;default:throw new Error("mode:"+t)}else if(e<27)switch(t){case QRMode.MODE_NUMBER:return 12;case QRMode.MODE_ALPHA_NUM:return 11;case QRMode.MODE_8BIT_BYTE:return 16;case QRMode.MODE_KANJI:return 10;default:throw new Error("mode:"+t)}else{if(!(e<41))throw new Error("type:"+e);switch(t){case QRMode.MODE_NUMBER:return 14;case QRMode.MODE_ALPHA_NUM:return 13;case QRMode.MODE_8BIT_BYTE:return 16;case QRMode.MODE_KANJI:return 12;default:throw new Error("mode:"+t)}}},getLostPoint:function(t){for(var e=t.getModuleCount(),r=0,o=0;o<e;o++)for(var n=0;n<e;n++){for(var i=0,a=t.isDark(o,n),s=-1;s<=1;s++)if(!(o+s<0||e<=o+s))for(var h=-1;h<=1;h++)n+h<0||e<=n+h||0==s&&0==h||a==t.isDark(o+s,n+h)&&i++;i>5&&(r+=3+i-5)}for(o=0;o<e-1;o++)for(n=0;n<e-1;n++){var l=0;t.isDark(o,n)&&l++,t.isDark(o+1,n)&&l++,t.isDark(o,n+1)&&l++,t.isDark(o+1,n+1)&&l++,0!=l&&4!=l||(r+=3)}for(o=0;o<e;o++)for(n=0;n<e-6;n++)t.isDark(o,n)&&!t.isDark(o,n+1)&&t.isDark(o,n+2)&&t.isDark(o,n+3)&&t.isDark(o,n+4)&&!t.isDark(o,n+5)&&t.isDark(o,n+6)&&(r+=40);for(n=0;n<e;n++)for(o=0;o<e-6;o++)t.isDark(o,n)&&!t.isDark(o+1,n)&&t.isDark(o+2,n)&&t.isDark(o+3,n)&&t.isDark(o+4,n)&&!t.isDark(o+5,n)&&t.isDark(o+6,n)&&(r+=40);var u=0;for(n=0;n<e;n++)for(o=0;o<e;o++)t.isDark(o,n)&&u++;return r+=10*(Math.abs(100*u/e/e-50)/5)}},QRMath={glog:function(t){if(t<1)throw new Error("glog("+t+")");return QRMath.LOG_TABLE[t]},gexp:function(t){for(;t<0;)t+=255;for(;t>=256;)t-=255;return QRMath.EXP_TABLE[t]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},i=0;i<8;i++)QRMath.EXP_TABLE[i]=1<<i;for(i=8;i<256;i++)QRMath.EXP_TABLE[i]=QRMath.EXP_TABLE[i-4]^QRMath.EXP_TABLE[i-5]^QRMath.EXP_TABLE[i-6]^QRMath.EXP_TABLE[i-8];for(i=0;i<255;i++)QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]]=i;function QRPolynomial(t,e){if(null==t.length)throw new Error(t.length+"/"+e);for(var r=0;r<t.length&&0==t[r];)r++;this.num=new Array(t.length-r+e);for(var o=0;o<t.length-r;o++)this.num[o]=t[o+r]}function QRRSBlock(t,e){this.totalCount=t,this.dataCount=e}function QRBitBuffer(){this.buffer=[],this.length=0}QRPolynomial.prototype={get:function(t){return this.num[t]},getLength:function(){return this.num.length},multiply:function(t){for(var e=new Array(this.getLength()+t.getLength()-1),r=0;r<this.getLength();r++)for(var o=0;o<t.getLength();o++)e[r+o]^=QRMath.gexp(QRMath.glog(this.get(r))+QRMath.glog(t.get(o)));return new QRPolynomial(e,0)},mod:function(t){if(this.getLength()-t.getLength()<0)return this;for(var e=QRMath.glog(this.get(0))-QRMath.glog(t.get(0)),r=new Array(this.getLength()),o=0;o<this.getLength();o++)r[o]=this.get(o);for(o=0;o<t.getLength();o++)r[o]^=QRMath.gexp(QRMath.glog(t.get(o))+e);return new QRPolynomial(r,0).mod(t)}},QRRSBlock.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],QRRSBlock.getRSBlocks=function(t,e){var r=QRRSBlock.getRsBlockTable(t,e);if(null==r)throw new Error("bad rs block @ typeNumber:"+t+"/errorCorrectLevel:"+e);for(var o=r.length/3,n=[],i=0;i<o;i++)for(var a=r[3*i+0],s=r[3*i+1],h=r[3*i+2],l=0;l<a;l++)n.push(new QRRSBlock(s,h));return n},QRRSBlock.getRsBlockTable=function(t,e){switch(e){case QRErrorCorrectLevel.L:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+0];case QRErrorCorrectLevel.M:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+1];case QRErrorCorrectLevel.Q:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+2];case QRErrorCorrectLevel.H:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+3];default:return}},QRBitBuffer.prototype={get:function(t){var e=Math.floor(t/8);return 1==(this.buffer[e]>>>7-t%8&1)},put:function(t,e){for(var r=0;r<e;r++)this.putBit(1==(t>>>e-r-1&1))},getLengthInBits:function(){return this.length},putBit:function(t){var e=Math.floor(this.length/8);this.buffer.length<=e&&this.buffer.push(0),t&&(this.buffer[e]|=128>>>this.length%8),this.length++}};var QRCodeLimitLength=[[17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],[134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],[321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],[586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],[929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],[1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],[1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],[2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273]];function QRCode(t){if(this.options={padding:4,width:256,height:256,typeNumber:4,color:"#000000",background:"#ffffff",ecl:"M"},"string"==typeof t&&(t={content:t}),t)for(var e in t)this.options[e]=t[e];if("string"!=typeof this.options.content)throw new Error("Expected 'content' as string!");if(0===this.options.content.length)throw new Error("Expected 'content' to be non-empty!");if(!(this.options.padding>=0))throw new Error("Expected 'padding' value to be non-negative!");if(!(this.options.width>0&&this.options.height>0))throw new Error("Expected 'width' or 'height' value to be higher than zero!");var r=this.options.content,o=function(t,e){for(var r=function(t){var e=encodeURI(t).toString().replace(/\%[0-9a-fA-F]{2}/g,"a");return e.length+(e.length!=t?3:0)}(t),o=1,n=0,i=0,a=QRCodeLimitLength.length;i<=a;i++){var s=QRCodeLimitLength[i];if(!s)throw new Error("Content too long: expected "+n+" but got "+r);switch(e){case"L":n=s[0];break;case"M":n=s[1];break;case"Q":n=s[2];break;case"H":n=s[3];break;default:throw new Error("Unknwon error correction level: "+e)}if(r<=n)break;o++}if(o>QRCodeLimitLength.length)throw new Error("Content too long");return o}(r,this.options.ecl),n=function(t){switch(t){case"L":return QRErrorCorrectLevel.L;case"M":return QRErrorCorrectLevel.M;case"Q":return QRErrorCorrectLevel.Q;case"H":return QRErrorCorrectLevel.H;default:throw new Error("Unknwon error correction level: "+t)}}(this.options.ecl);this.qrcode=new QRCodeModel(o,n),this.qrcode.addData(r),this.qrcode.make()}QRCode.prototype.svg=function(t){var e=this.options||{},r=this.qrcode.modules;void 0===t&&(t={container:e.container||"svg"});for(var o=void 0===e.pretty||!!e.pretty,n=o?"  ":"",i=o?"\r\n":"",a=e.width,s=e.height,h=r.length,l=a/(h+2*e.padding),u=s/(h+2*e.padding),g=void 0!==e.join&&!!e.join,d=void 0!==e.swap&&!!e.swap,f=void 0===e.xmlDeclaration||!!e.xmlDeclaration,c=void 0!==e.predefined&&!!e.predefined,R=c?n+'<defs><path id="qrmodule" d="M0 0 h'+u+" v"+l+' H0 z" style="fill:'+e.color+';shape-rendering:crispEdges;" /></defs>'+i:"",p=n+'<rect x="0" y="0" width="'+a+'" height="'+s+'" style="fill:'+e.background+';shape-rendering:crispEdges;"/>'+i,m="",Q="",v=0;v<h;v++)for(var E=0;E<h;E++){if(r[E][v]){var M=E*l+e.padding*l,C=v*u+e.padding*u;if(d){var B=M;M=C,C=B}if(g){var w=l+M,L=u+C;M=Number.isInteger(M)?Number(M):M.toFixed(2),C=Number.isInteger(C)?Number(C):C.toFixed(2),w=Number.isInteger(w)?Number(w):w.toFixed(2),Q+="M"+M+","+C+" V"+(L=Number.isInteger(L)?Number(L):L.toFixed(2))+" H"+w+" V"+C+" H"+M+" Z "}else m+=c?n+'<use x="'+M.toString()+'" y="'+C.toString()+'" href="#qrmodule" />'+i:n+'<rect x="'+M.toString()+'" y="'+C.toString()+'" width="'+l+'" height="'+u+'" style="fill:'+e.color+';shape-rendering:crispEdges;"/>'+i}}g&&(m=n+'<path x="0" y="0" style="fill:'+e.color+';shape-rendering:crispEdges;" d="'+Q+'" />');var T="";switch(t.container){case"svg":f&&(T+='<?xml version="1.0" standalone="yes"?>'+i),T+='<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="'+a+'" height="'+s+'">'+i,T+=R+p+m,T+="</svg>";break;case"svg-viewbox":f&&(T+='<?xml version="1.0" standalone="yes"?>'+i),T+='<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 '+a+" "+s+'">'+i,T+=R+p+m,T+="</svg>";break;case"g":T+='<g width="'+a+'" height="'+s+'">'+i,T+=R+p+m,T+="</g>";break;default:T+=(R+p+m).replace(/^\s+/,"")}return T},QRCode.prototype.save=function(t,e){var r=this.svg();"function"!=typeof e&&(e=function(t,e){});try{require("fs").writeFile(t,r,e)}catch(t){e(t)}},"undefined"!=typeof module&&(module.exports=QRCode);
+</script>
+
+<!-- ===== APPLICATION HACCP ===== -->
+<script>
+// ========== QR SCAN AUTO-REDIRECT ==========
+(function(){
+  const p=new URLSearchParams(window.location.search);
+  const zone=p.get('zone'), action=p.get('action');
+  if(zone||action){
+    window._qrZone=zone;
+    window._qrAction=action;
+  }
+})();
+
+// ========== DATA ==========
+function exportBackup(){const data={version:1,exportDate:new Date().toISOString(),D,qrbase:localStorage.getItem('haccpZ_qrbase')||'',sig1:localStorage.getItem('haccpZ_sig1')||'',signame1:localStorage.getItem('haccpZ_signame1')||'',sig2:localStorage.getItem('haccpZ_sig2')||'',signame2:localStorage.getItem('haccpZ_signame2')||'',formateurPin:localStorage.getItem('haccpZ_pin')||''};const blob=new Blob([JSON.stringify(data)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='HACCP_sauvegarde_'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Sauvegarde exportée');}
+function importBackup(input){const file=input.files&&input.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(e){try{const data=JSON.parse(e.target.result);if(!data.D)throw new Error('format invalide');if(!confirm('Restaurer cette sauvegarde va remplacer toutes les données actuelles. Continuer ?'))return;['temp','livraison','tracabilite','nettoyage','nc'].forEach(k=>{D[k]=data.D[k]||[];LS.set(k,D[k]);});if(data.qrbase)localStorage.setItem('haccpZ_qrbase',data.qrbase);['sig1','signame1','sig2','signame2'].forEach(k=>{if(data[k])localStorage.setItem('haccpZ_'+k,data[k]);});if(data.formateurPin){localStorage.setItem('haccpZ_pin',data.formateurPin);document.getElementById('formateur-pin').value=data.formateurPin;}render('temp');render('livraison');render('tracabilite');render('nettoyage');render('nc');updateStats();renderFormateurStatus();toast('Sauvegarde restaurée');}catch(err){toast('Fichier de sauvegarde invalide','err');}};reader.readAsText(file);input.value='';}
+function saveFormateurPin(){const pin=document.getElementById('formateur-pin').value.trim();if(pin)localStorage.setItem('haccpZ_pin',pin);else localStorage.removeItem('haccpZ_pin');renderFormateurStatus();toast(pin?'Code formateur enregistré':'Mode formateur désactivé');}
+function renderFormateurStatus(){const pin=localStorage.getItem('haccpZ_pin');const el=document.getElementById('formateur-status');if(!el)return;el.innerHTML=pin?'<span style="color:var(--green-mid)"><i class="ti ti-lock"></i> Mode formateur activé : un code sera demandé pour clôturer une NC.</span>':'Aucun code défini : tout le monde peut clôturer une NC.';}
+function checkFormateurPin(){const pin=localStorage.getItem('haccpZ_pin');if(!pin)return true;const entered=prompt('Code formateur requis pour clôturer cette NC :');if(entered===null)return false;if(entered!==pin){toast('Code incorrect','err');return false;}return true;}
+function handlePhoto(input,key){const file=input.files&&input.files[0];if(!file)return;const finish=dataUrl=>{PHOTO_BUF[key]=dataUrl;const prev=document.getElementById(key+'-photo-preview');prev.innerHTML=`<img src="${dataUrl}" style="max-width:140px;border-radius:6px;border:1px solid var(--border)"> <button type="button" class="btn-del" onclick="PHOTO_BUF['${key}']=null;document.getElementById('${key}-photo-preview').innerHTML='';document.getElementById('${key}-photo').value='';"><i class="ti ti-x"></i></button>`;};
+  if(typeof createImageBitmap==='function'){
+    createImageBitmap(file,{resizeWidth:480,resizeQuality:'medium'}).then(bmp=>{const canvas=document.createElement('canvas');canvas.width=bmp.width;canvas.height=bmp.height;const ctx=canvas.getContext('2d');ctx.drawImage(bmp,0,0);bmp.close();const dataUrl=canvas.toDataURL('image/jpeg',0.6);finish(dataUrl);input.value='';}).catch(()=>{toast('Photo trop volumineuse, non ajoutée','err');input.value='';});
+    return;
+  }
+  const url=URL.createObjectURL(file);const img=new Image();img.onload=function(){try{const maxW=480;const scale=Math.min(1,maxW/img.width);const w=Math.max(1,Math.round(img.width*scale));const h=Math.max(1,Math.round(img.height*scale));const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);finish(canvas.toDataURL('image/jpeg',0.6));}catch(err){toast('Photo trop volumineuse, non ajoutée','err');}finally{URL.revokeObjectURL(url);img.src='';}};img.onerror=function(){URL.revokeObjectURL(url);toast('Impossible de lire la photo','err');};img.src=url;}
+function photoThumb(photo){return photo?`<div class="li-photo" style="display:flex;align-items:center;gap:6px;margin-top:4px"><img src="${photo}" onclick="showPhotoModal('${photo.replace(/'/g,"\\'")}')" style="max-width:60px;max-height:60px;border-radius:6px;border:1px solid var(--border);cursor:pointer"><button type="button" class="btn-export" style="padding:3px 8px;font-size:11px" onclick="downloadPhoto('${photo.replace(/'/g,"\\'")}')"><i class="ti ti-download"></i> Photo</button></div>`:'';}
+function downloadPhoto(src){const a=document.createElement('a');a.href=src;a.download='photo_'+Date.now()+'.jpg';a.click();}
+function showPhotoModal(src){const ov=document.createElement('div');ov.className='modal-overlay';ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9999';ov.onclick=()=>ov.remove();ov.innerHTML=`<img src="${src}" style="max-width:90vw;max-height:90vh;border-radius:8px">`;document.body.appendChild(ov);}
+function resetPhoto(key){PHOTO_BUF[key]=null;const prev=document.getElementById(key+'-photo-preview');if(prev)prev.innerHTML='';const inp=document.getElementById(key+'-photo');if(inp)inp.value='';}
+let D={temp:LS.get('temp'),livraison:LS.get('livraison'),tracabilite:LS.get('tracabilite'),nettoyage:LS.get('nettoyage'),nc:LS.get('nc')};
+const save=k=>LS.set(k,D[k]);
+
+const ZONES={
+  'stockage-froid':{label:'Stockage froid',icon:'❄️',color:'#4A90D9',equips:['Réfrigérateur 1','Réfrigérateur 2','Congélateur','Chambre froide positive','Chambre froide négative']},
+  'legumerie':{label:'Légumerie',icon:'🥦',color:'#5BA85A',equips:['Plan de travail légumerie','Bac de lavage','Éplucheuse']},
+  'stockage-sec':{label:'Stockage sec',icon:'📦',color:'#9B7DC8',equips:['Étagères stockage sec','Armoire épicerie']},
+  'reception':{label:'Quai de réception',icon:'🚚',color:'#E07B39',equips:['Quai livraison','Balance réception','Thermomètre sonde']},
+  'cuisson':{label:'Zone chaude / Cuisson',icon:'🔥',color:'#D94F3D',equips:['Four combiné','Plaques induction','Bain-marie','Friteuse','Salamandre','Chaudron']},
+  'prep-froide':{label:'Préparation froide',icon:'🧊',color:'#2E86C1',equips:['Plan de travail froid','Cellule de refroidissement','Petit matériel']},
+  'distribution':{label:'Dressage / Distribution',icon:'🍽️',color:'#16A085',equips:['Pass','Self-service','Bain-marie distribution']},
+  'plonge':{label:'Plonge',icon:'🧹',color:'#5D6D7E',equips:['Lave-vaisselle','Bacs plonge','Zone déchets']},
+  'salle':{label:'Salle de formation',icon:'📚',color:'#7D6608',equips:['Tables formation','Tableau','Projecteur']},
+  'vestiaires':{label:'Vestiaires / Sanitaires',icon:'🚿',color:'#884EA0',equips:['Vestiaires hommes','Vestiaires femmes','Sanitaires','Lavabos']}
+};
+
+let selectedZone=null;
+
+function toast(msg,type='ok'){const el=document.getElementById('toast-el');el.className='toast show '+type;document.getElementById('toast-msg').textContent=msg;setTimeout(()=>el.classList.remove('show'),2500);}
+function now(){const d=new Date();return d.toLocaleDateString('fr-FR')+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+function clock(){const d=new Date();document.getElementById('hdr-date').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});document.getElementById('hdr-time').textContent=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+function show(id,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');btn.classList.add('active');
+  if(id==='qrcodes')loadQRPage();
+  if(id==='graphiques')setTimeout(drawAllGraphs,50);
+}
+function tempOK(v,eq){if(!eq)return v<=4;if(eq.includes('négatif')||eq.includes('Congélateur')||eq.includes('Cellule'))return v<=-18;if(eq.includes('Bain')||eq.includes('Friteuse'))return v>=63;return v<=4;}
+function badge(s){const m={ok:'b-ok',warn:'b-warn',err:'b-err',critic:'b-critic',open:'b-open',closed:'b-closed'};const l={ok:'Conforme',warn:'Réserve',err:'Non conforme',critic:'Critique',open:'Ouverte',closed:'Clôturée'};const ic={ok:'ti-circle-check',warn:'ti-alert-circle',err:'ti-circle-x',critic:'ti-flame',open:'ti-clock',closed:'ti-lock-check'};return`<span class="badge ${m[s]||'b-gray'}"><i class="ti ${ic[s]||'ti-point'}"></i>${l[s]||s}</span>`;}
+function dlcBadge(dlc){const t=new Date();t.setHours(0,0,0,0);const diff=Math.round((new Date(dlc)-t)/86400000);if(diff<0)return badge('err');if(diff===0)return`<span class="badge b-warn"><i class="ti ti-alert-circle"></i>Auj. m\u00eame</span>`;if(diff<=2)return`<span class="badge b-warn"><i class="ti ti-clock"></i>J-${diff}</span>`;return`<span class="badge b-ok"><i class="ti ti-check"></i>J-${diff}</span>`;}
+function liIcon(cls,ico){return`<div class="li-icon ${cls}"><i class="ti ${ico}"></i></div>`;}
+function equipIcon(eq){if(!eq)return liIcon('fridge','ti-box');if(eq.includes('négatif')||eq.includes('Congélateur')||eq.includes('Cellule'))return liIcon('cold','ti-snowflake');if(eq.includes('Bain')||eq.includes('Friteuse')||eq.includes('Four'))return liIcon('hot','ti-flame');return liIcon('fridge','ti-box');}
+function del(k,i){D[k].splice(i,1);save(k);render(k);updateStats();}
+
+function updateStats(){
+  const ids={temp:'cnt-temp',livraison:'cnt-liv',tracabilite:'cnt-trac',nettoyage:'cnt-net',nc:'cnt-nc'};
+  Object.entries(ids).forEach(([k,id])=>document.getElementById(id).textContent=D[k].length);
+  document.getElementById('cnt-zones').textContent=Object.keys(ZONES).length;
+  const ok=D.temp.filter(t=>tempOK(t.val,t.equip)).length;
+  document.getElementById('gs-conf').textContent=ok||'—';
+  document.getElementById('gs-ko').textContent=(D.temp.length-ok)||'—';
+  document.getElementById('gs-liv').textContent=D.livraison.length||'—';
+  document.getElementById('gs-open').textContent=D.nc.filter(n=>n.statut==='open').length||'—';
+  updateZoneDots();
+}
+
+function getZoneStatus(zid){
+  const temps=D.temp.filter(t=>t.zone===zid);
+  const nets=D.nettoyage.filter(n=>n.zone===zid);
+  const ncs=D.nc.filter(n=>n.zone===zid&&n.statut==='open');
+  if(ncs.length>0)return'red';
+  if(temps.some(t=>!tempOK(t.val,t.equip)))return'red';
+  if(nets.some(n=>n.result==='warn'))return'amber';
+  if(temps.length>0||nets.length>0)return'green';
+  return'gray';
+}
+function updateZoneDots(){
+  const colors={green:'#1D9E75',red:'#D93025',amber:'#C87C10',gray:'#9AA3B8'};
+  Object.keys(ZONES).forEach(zid=>{
+    const dot=document.getElementById('dot-'+zid);
+    if(dot){const s=getZoneStatus(zid);dot.setAttribute('fill',colors[s]||colors.gray);}
+  });
+}
+function selectZone(zid){
+  selectedZone=zid;
+  document.querySelectorAll('.zone-area').forEach(el=>{el.classList.toggle('selected',el.dataset.zone===zid);});
+  renderZoneDetail(zid);
+}
+function renderZoneDetail(zid){
+  const z=ZONES[zid];if(!z)return;
+  const status=getZoneStatus(zid);
+  const statusColors={green:'#1D9E75',red:'#D93025',amber:'#C87C10',gray:'#9AA3B8'};
+  const statusLabels={green:'Conforme',red:'Non conforme',amber:'À surveiller',gray:'Non renseigné'};
+  const temps=D.temp.filter(t=>t.zone===zid).slice(-5).reverse();
+  const nets=D.nettoyage.filter(n=>n.zone===zid).slice(-3).reverse();
+  const ncs=D.nc.filter(n=>n.zone===zid&&n.statut==='open');
+  let html=`<div class="zone-detail"><div class="zone-detail-name"><div class="zone-dot" style="background:${statusColors[status]}"></div>${z.icon} ${z.label}</div><div class="zone-detail-meta">Statut : <strong style="color:${statusColors[status]}">${statusLabels[status]}</strong>${ncs.length>0?` · <span style="color:var(--red)">${ncs.length} NC ouverte${ncs.length>1?'s':''}</span>`:''}</div><div class="zone-actions"><button class="btn-zone-action primary" onclick="openModal('temp','${zid}')"><i class="ti ti-thermometer"></i> Relevé temp.</button><button class="btn-zone-action" onclick="openModal('nettoyage','${zid}')"><i class="ti ti-spray"></i> Nettoyage</button><button class="btn-zone-action" onclick="openModal('nc','${zid}')"><i class="ti ti-alert-triangle"></i> Déclarer NC</button></div>`;
+  if(temps.length>0){html+=`<div class="zone-relevés-title">Derniers relevés température</div><div class="zone-relevés">`;temps.forEach(t=>{const ok=tempOK(t.val,t.equip);html+=`<div class="zone-relevé-item"><div class="zri-left"><div class="zri-title">${t.equip}</div><div class="zri-sub">${t.date}${t.agent?' · '+t.agent:''}</div></div><span style="font-size:16px;font-weight:700;color:${ok?'var(--green-mid)':'var(--red)'}">${t.val}°C</span></div>`;});html+=`</div>`;}
+  if(nets.length>0){html+=`<div class="zone-relevés-title" style="margin-top:10px">Derniers nettoyages</div><div class="zone-relevés">`;nets.forEach(n=>{html+=`<div class="zone-relevé-item"><div class="zri-left"><div class="zri-title">${n.equip||'Zone générale'}</div><div class="zri-sub">${n.date} · ${n.agent}</div></div>${badge(n.result)}</div>`;});html+=`</div>`;}
+  if(temps.length===0&&nets.length===0)html+=`<div style="text-align:center;padding:20px;color:var(--text2);font-size:13px"><i class="ti ti-info-circle" style="display:block;font-size:24px;margin-bottom:8px;color:var(--text3)"></i>Aucun relevé pour cette zone</div>`;
+  html+=`</div>`;
+  document.getElementById('zone-detail-panel').innerHTML=html;
+}
+
+function openModal(type,zid){
+  const z=ZONES[zid];
+  const body=document.getElementById('modal-body');
+  const title=document.getElementById('modal-title');
+  if(type==='temp'){
+    title.textContent=`🌡️ Relevé — ${z.label}`;
+    const equips=z.equips.map(e=>`<option>${e}</option>`).join('');
+    body.innerHTML=`<div class="field"><label>Équipement</label><select id="m-equip">${equips}</select></div><div class="field-row"><div class="field"><label>Température (°C)</label><input type="number" id="m-val" step="0.1" placeholder="ex: 3.5"></div><div class="field"><label>Heure</label><input type="time" id="m-heure"></div></div><div class="field"><label>Agent</label><input type="text" id="m-agent" placeholder="Nom / prénom"></div><button class="btn-submit" onclick="submitModalTemp('${zid}')"><i class="ti ti-check"></i> Enregistrer</button>`;
+  } else if(type==='nettoyage'){
+    title.textContent=`🧹 Nettoyage — ${z.label}`;
+    body.innerHTML=`<div class="field"><label>Équipement / surface</label><input type="text" id="m-equip" placeholder="Plans de travail, sol…"></div><div class="field"><label>Produit utilisé</label><input type="text" id="m-produit" placeholder="ex: Javel 0.5%"></div><div class="field-row"><div class="field"><label>Agent</label><input type="text" id="m-agent" placeholder="Nom"></div><div class="field"><label>Heure</label><input type="time" id="m-heure"></div></div><div class="field"><label>Résultat</label><select id="m-result"><option value="ok">Conforme</option><option value="warn">À surveiller</option><option value="err">Non conforme</option></select></div><button class="btn-submit" onclick="submitModalNet('${zid}')"><i class="ti ti-check"></i> Enregistrer</button>`;
+  } else if(type==='nc'){
+    title.textContent=`⚠️ Non-conformité — ${z.label}`;
+    body.innerHTML=`<div class="field"><label>Type</label><select id="m-nctype"><option>Température hors seuil</option><option>DLC dépassée</option><option>Contamination croisée</option><option>Non-respect procédure nettoyage</option><option>Autre</option></select></div><div class="field-row"><div class="field"><label>Gravité</label><select id="m-grav"><option value="warn">Mineure</option><option value="err">Majeure</option><option value="critic">Critique</option></select></div><div class="field"><label>Statut</label><select id="m-statut"><option value="open">Ouverte</option><option value="closed">Clôturée</option></select></div></div><div class="field"><label>Description</label><textarea id="m-desc" placeholder="Décrire la NC…"></textarea></div><div class="field"><label>Action corrective</label><textarea id="m-action" placeholder="Action mise en place…"></textarea></div><div class="field"><label>Déclaré par</label><input type="text" id="m-agent" placeholder="Nom"></div><button class="btn-submit" onclick="submitModalNC('${zid}')"><i class="ti ti-alert-triangle"></i> Déclarer</button>`;
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(()=>{const f=body.querySelector('input,select');if(f)f.focus();},100);
+}
+function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closeModalBtn();}
+function closeModalBtn(){document.getElementById('modal-overlay').classList.remove('open');}
+function submitModalTemp(zid){const val=parseFloat(document.getElementById('m-val').value);if(isNaN(val)){toast('Température requise','err');return;}const equip=document.getElementById('m-equip').value;D.temp.push({val,equip,zone:zid,agent:document.getElementById('m-agent').value.trim()||'Non précisé',heure:document.getElementById('m-heure').value,date:now()});save('temp');renderTemp();updateStats();renderZoneDetail(zid);closeModalBtn();toast(tempOK(val,equip)?'Relevé conforme enregistré':'⚠ Hors seuil enregistré',tempOK(val,equip)?'ok':'warn');}
+function submitModalNet(zid){D.nettoyage.push({zone:zid,equip:document.getElementById('m-equip').value.trim(),produit:document.getElementById('m-produit').value.trim()||'—',agent:document.getElementById('m-agent').value.trim()||'Non précisé',heure:document.getElementById('m-heure').value,result:document.getElementById('m-result').value,date:now()});save('nettoyage');renderNettoyage();updateStats();renderZoneDetail(zid);closeModalBtn();toast('Nettoyage enregistré');}
+function submitModalNC(zid){const desc=document.getElementById('m-desc').value.trim();if(!desc){toast('Description requise','err');return;}D.nc.push({zone:zid,type:document.getElementById('m-nctype').value,grav:document.getElementById('m-grav').value,desc,action:document.getElementById('m-action').value.trim(),agent:document.getElementById('m-agent').value.trim()||'Non précisé',statut:document.getElementById('m-statut').value,date:now()});save('nc');renderNC();updateStats();renderZoneDetail(zid);closeModalBtn();toast('Non-conformité déclarée','warn');}
+
+function renderTemp(){const filterZone=document.getElementById('t-filter-zone')?.value||'';const search=(document.getElementById('t-search')?.value||'').toLowerCase();const el=document.getElementById('t-list');let items=D.temp;if(filterZone)items=items.filter(t=>t.zone===filterZone);if(search)items=items.filter(t=>(t.equip||'').toLowerCase().includes(search)||(t.agent||'').toLowerCase().includes(search)||(t.date||'').includes(search));if(!items.length){el.innerHTML=`<div class="empty"><i class="ti ti-thermometer"></i><p>${filterZone?'Aucun relevé pour cette zone':'Aucun relevé enregistré'}</p></div>`;return;}el.innerHTML=items.slice().reverse().map((it)=>{const i=D.temp.indexOf(it);const ok=tempOK(it.val,it.equip);const zoneLbl=it.zone&&ZONES[it.zone]?`<span class="badge b-zone">${ZONES[it.zone].icon} ${ZONES[it.zone].label}</span>`:'';return`<div class="list-item">${equipIcon(it.equip)}<div class="li-info"><div class="li-title">${it.equip}</div><div class="li-sub">${it.date}${it.heure?' · '+it.heure:''}${it.agent?' · '+it.agent:''}</div><div style="margin-top:3px">${zoneLbl}</div></div><div class="li-right"><span class="temp-val ${ok?'temp-ok':'temp-err'}">${it.val}°C</span>${badge(ok?'ok':'err')}<button class="btn-del" onclick="del('temp',${i})"><i class="ti ti-trash"></i></button></div></div>`;}).join('');}
+function renderLivraison(){const el=document.getElementById('l-list');if(!D.livraison.length){el.innerHTML=`<div class="empty"><i class="ti ti-truck-delivery"></i><p>Aucune livraison enregistrée</p></div>`;return;}el.innerHTML=D.livraison.slice().reverse().map((it)=>{const i=D.livraison.length-1-D.livraison.indexOf(it);return`<div class="list-item">${liIcon(it.etat==='err'?'red':it.etat==='warn'?'hot':'green','ti-truck-delivery')}<div class="li-info"><div class="li-title">${it.fourn} <span style="font-weight:400;color:var(--text2)">— ${it.produit}</span></div><div class="li-sub">${it.date} · BL: ${it.bon||'—'}${it.temp!=='—'?' · '+it.temp+'°C':''}</div>${it.obs?`<div class="li-note">${it.obs}</div>`:''}</div><div class="li-right">${badge(it.etat)}<button class="btn-del" onclick="del('livraison',${D.livraison.length-1-D.livraison.indexOf(it)})"><i class="ti ti-trash"></i></button></div></div>`;}).join('');}
+function renderTracabilite(){const el=document.getElementById('tr-list');if(!D.tracabilite.length){el.innerHTML=`<div class="empty"><i class="ti ti-tag"></i><p>Aucun lot enregistré</p></div>`;return;}el.innerHTML=D.tracabilite.slice().reverse().map((it)=>{const i=D.tracabilite.length-1-D.tracabilite.indexOf(it);const zoneLbl=it.zone&&ZONES[it.zone]?`<span class="badge b-zone">${ZONES[it.zone].icon} ${ZONES[it.zone].label}</span>`:'';return`<div class="list-item">${liIcon('green','ti-bowl')}<div class="li-info"><div class="li-title">${it.nom}</div><div class="li-sub">${it.qte} portions · Fab. ${it.fab} · ${it.temp}°C · ${it.resp}</div><div style="margin-top:3px">${zoneLbl}</div>${photoThumb(it.photo)}</div><div class="li-right">${dlcBadge(it.dlc)}<button class="btn-del" onclick="del('tracabilite',${D.tracabilite.length-1-D.tracabilite.indexOf(it)})"><i class="ti ti-trash"></i></button></div></div>`;}).join('');}
+function renderNettoyage(){const el=document.getElementById('n-list');if(!D.nettoyage.length){el.innerHTML=`<div class="empty"><i class="ti ti-spray"></i><p>Aucune opération enregistrée</p></div>`;return;}el.innerHTML=D.nettoyage.slice().reverse().map((it)=>{const i=D.nettoyage.length-1-D.nettoyage.indexOf(it);const zoneLbl=it.zone&&ZONES[it.zone]?`<span class="badge b-zone">${ZONES[it.zone].icon} ${ZONES[it.zone].label}</span>`:'';return`<div class="list-item">${liIcon(it.result==='ok'?'green':it.result==='warn'?'hot':'red','ti-spray')}<div class="li-info"><div class="li-title">${it.equip||'Zone générale'}</div><div class="li-sub">${it.date}${it.heure?' · '+it.heure:''} · ${it.agent} · ${it.produit}</div><div style="margin-top:3px">${zoneLbl}</div>${photoThumb(it.photo)}</div><div class="li-right">${badge(it.result)}<button class="btn-del" onclick="del('nettoyage',${D.nettoyage.length-1-D.nettoyage.indexOf(it)})"><i class="ti ti-trash"></i></button></div></div>`;}).join('');}
+function renderNC(){const search=(document.getElementById('nc-search')?.value||'').toLowerCase();const el=document.getElementById('nc-list');const items=search?D.nc.filter(n=>(n.type||'').toLowerCase().includes(search)||(n.desc||'').toLowerCase().includes(search)||(n.agent||'').toLowerCase().includes(search)):D.nc;if(!items.length){el.innerHTML=`<div class="empty"><i class="ti ti-alert-triangle"></i><p>Aucune non-conformité déclarée</p></div>`;return;}el.innerHTML=items.slice().reverse().map((it)=>{const i=D.nc.indexOf(it);const gb=it.grav==='critic'?badge('critic'):badge(it.grav);const zoneLbl=it.zone&&ZONES[it.zone]?`<span class="badge b-zone">${ZONES[it.zone].icon} ${ZONES[it.zone].label}</span>`:'';return`<div class="list-item">${liIcon(it.grav==='critic'||it.grav==='err'?'red':'hot','ti-alert-triangle')}<div class="li-info"><div class="li-title">${it.type}</div><div class="li-sub">${it.date} · ${it.agent}</div><div style="margin-top:3px">${zoneLbl}</div>${it.desc?`<div class="li-note">${it.desc.substring(0,80)}${it.desc.length>80?'…':''}</div>`:''}${photoThumb(it.photo)}</div><div class="li-right-col">${gb}${badge(it.statut)}<button class="btn-del" onclick="del('nc',${D.nc.length-1-D.nc.indexOf(it)})"><i class="ti ti-trash"></i></button></div></div>`;}).join('');}
+function render(k){({temp:renderTemp,livraison:renderLivraison,tracabilite:renderTracabilite,nettoyage:renderNettoyage,nc:renderNC})[k]();}
+
+function addTemp(){const val=parseFloat(document.getElementById('t-val').value);if(isNaN(val)){toast('Température requise','err');return;}const equip=document.getElementById('t-equip').value;const zone=document.getElementById('t-zone').value;D.temp.push({val,equip,zone,agent:document.getElementById('t-agent').value.trim()||'Non précisé',heure:document.getElementById('t-heure').value,date:now()});save('temp');renderTemp();updateStats();checkAlertes();renderRappelGrid();document.getElementById('t-val').value='';document.getElementById('t-agent').value='';document.getElementById('t-heure').value='';toast(tempOK(val,equip)?'Relevé conforme':'⚠ Hors seuil enregistré',tempOK(val,equip)?'ok':'warn');}
+function addLivraison(){const fourn=document.getElementById('l-fourn').value.trim(),produit=document.getElementById('l-produit').value.trim();if(!fourn||!produit){toast('Fournisseur et produit requis','err');return;}const temp=parseFloat(document.getElementById('l-temp').value);D.livraison.push({fourn,produit,temp:isNaN(temp)?'—':temp,bon:document.getElementById('l-bon').value.trim(),etat:document.getElementById('l-etat').value,obs:document.getElementById('l-obs').value.trim(),date:now()});save('livraison');renderLivraison();updateStats();['l-fourn','l-produit','l-temp','l-bon','l-obs'].forEach(id=>document.getElementById(id).value='');toast('Livraison enregistrée');}
+function addTracabilite(){const nom=document.getElementById('tr-nom').value.trim(),dlc=document.getElementById('tr-dlc').value,fab=document.getElementById('tr-fab').value;if(!nom||!dlc||!fab){toast('Nom, date fabrication et DLC requis','err');return;}const temp=parseFloat(document.getElementById('tr-temp').value);D.tracabilite.push({nom,qte:document.getElementById('tr-qte').value||'—',fab,dlc,temp:isNaN(temp)?'—':temp,zone:document.getElementById('tr-zone').value,resp:document.getElementById('tr-resp').value.trim()||'Non précisé',photo:PHOTO_BUF.tr,date:now()});save('tracabilite');renderTracabilite();updateStats();['tr-nom','tr-qte','tr-fab','tr-dlc','tr-temp','tr-resp'].forEach(id=>document.getElementById(id).value='');resetPhoto('tr');toast('Lot enregistré');}
+function addNettoyage(){D.nettoyage.push({zone:document.getElementById('n-zone').value,equip:document.getElementById('n-equip').value.trim(),produit:document.getElementById('n-produit').value.trim()||'—',agent:document.getElementById('n-agent').value.trim()||'Non précisé',heure:document.getElementById('n-heure').value,result:document.getElementById('n-result').value,photo:PHOTO_BUF.n,date:now()});save('nettoyage');renderNettoyage();updateStats();document.getElementById('n-equip').value='';document.getElementById('n-produit').value='';document.getElementById('n-agent').value='';document.getElementById('n-heure').value='';resetPhoto('n');toast('Opération enregistrée');}
+function addNC(){const desc=document.getElementById('nc-desc').value.trim();if(!desc){toast('Description requise','err');return;}D.nc.push({zone:document.getElementById('nc-zone').value,type:document.getElementById('nc-type').value,grav:document.getElementById('nc-grav').value,desc,action:document.getElementById('nc-action').value.trim(),agent:document.getElementById('nc-agent').value.trim()||'Non précisé',statut:document.getElementById('nc-statut').value,photo:PHOTO_BUF.nc,date:now()});save('nc');renderNC();updateStats();['nc-desc','nc-action','nc-agent'].forEach(id=>document.getElementById(id).value='');resetPhoto('nc');toast('Non-conformité déclarée','warn');}
+function updateEquipByZone(){const zid=document.getElementById('t-zone').value;const sel=document.getElementById('t-equip');const z=ZONES[zid];if(z&&z.equips){sel.innerHTML=z.equips.map(e=>`<option>${e}</option>`).join('');}else{sel.innerHTML='<option>Réfrigérateur 1</option><option>Réfrigérateur 2</option><option>Congélateur</option><option>Chambre froide positive</option><option>Chambre froide négative</option><option>Bain-marie</option><option>Four</option><option>Plan de travail</option>';}}
+function exportCSV(k){if(!D[k].length){toast('Aucune donnée à exporter','err');return;}const labels={temp:'Températures',livraison:'Livraisons',tracabilite:'Traçabilité',nettoyage:'Nettoyage',nc:'Non-conformités'};let csv='data:text/csv;charset=utf-8,\uFEFF'+Object.keys(D[k][0]).join(';')+'\n';D[k].forEach(r=>{csv+=Object.values(r).map(v=>`"${String(v).replace(/"/g,'""')}"`).join(';')+'\n';});const a=document.createElement('a');a.href=encodeURI(csv);a.download='HACCP_'+labels[k]+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();toast('Export CSV téléchargé');}
+
+// ========== AUDIT PDF ==========
+function filterRange(arr,from,to){return arr.filter(it=>{if(!it.date)return false;const p=it.date.split(' ')[0].split('/');if(p.length<3)return false;const iso=p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0');return iso>=from&&iso<=to;});}
+function scoreZone(zid){const temps=D.temp.filter(t=>t.zone===zid);const nets=D.nettoyage.filter(n=>n.zone===zid);const ncs=D.nc.filter(n=>n.zone===zid&&n.statut==='open');if(!temps.length&&!nets.length)return{score:null,label:'Non évalué',color:'#9AA3B8'};let pts=100;const ko=temps.filter(t=>!tempOK(t.val,t.equip)).length;if(temps.length)pts-=Math.round((ko/temps.length)*40);pts-=ncs.filter(n=>n.grav==='critic').length*20;pts-=ncs.filter(n=>n.grav==='err').length*10;pts-=ncs.filter(n=>n.grav==='warn').length*5;const netKO=nets.filter(n=>n.result==='err').length;if(nets.length)pts-=Math.round((netKO/nets.length)*20);pts=Math.max(0,Math.min(100,pts));let label,color;if(pts>=80){label='Conforme';color='#0F7A5A';}else if(pts>=60){label='Acceptable';color='#C87C10';}else{label='Non conforme';color='#D93025';}return{score:pts,label,color};}
+function genAudit(){
+  const from=document.getElementById('audit-from').value;
+  const auditTo=document.getElementById('audit-to').value;
+  const auditeur=document.getElementById('audit-name').value||'Non renseigné';
+  const etab=document.getElementById('audit-etab').value||'Centre de formation';
+  const ref=document.getElementById('audit-ref').value||('AUDIT-'+new Date().toISOString().slice(0,10));
+  if(!from||!auditTo){toast('Sélectionnez la période','err');return;}
+  const temps=filterRange(D.temp,from,auditTo);
+  const livs=filterRange(D.livraison,from,auditTo);
+  const tracs=filterRange(D.tracabilite,from,auditTo);
+  const nets=filterRange(D.nettoyage,from,auditTo);
+  const ncs=filterRange(D.nc,from,auditTo);
+  const totalOK=temps.filter(t=>tempOK(t.val,t.equip)).length;
+  const totalKO=temps.length-totalOK;
+  const pctConf=temps.length?Math.round(totalOK/temps.length*100):null;
+  const openNCs=ncs.filter(n=>n.statut==='open').length;
+  const critNCs=ncs.filter(n=>n.grav==='critic').length;
+  const dateFrom=new Date(from+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  const dateTo=new Date(auditTo+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  const today=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  let globalScore=100;
+  if(temps.length)globalScore-=Math.round((totalKO/temps.length)*30);
+  globalScore-=critNCs*15;
+  globalScore-=ncs.filter(n=>n.grav==='err').length*8;
+  globalScore-=ncs.filter(n=>n.grav==='warn'&&n.statut==='open').length*3;
+  globalScore=Math.max(0,Math.min(100,globalScore));
+  let globalLabel,globalColor,globalBg;
+  if(globalScore>=80){globalLabel='CONFORME';globalColor='#0F7A5A';globalBg='#E3F5EE';}
+  else if(globalScore>=60){globalLabel='ACCEPTABLE';globalColor='#C87C10';globalBg='#FEF3E2';}
+  else{globalLabel='NON CONFORME';globalColor='#D93025';globalBg='#FDECEA';}
+  const sig1=loadSigData(1),sig2=loadSigData(2);
+  const sn1=localStorage.getItem('haccpZ_signame1')||'';
+  const sn2=localStorage.getItem('haccpZ_signame2')||'';
+
+  // Build HTML report
+  const R=String.raw;
+  let html='<div id="audit-doc" style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;color:#1A1D24;font-size:13px">';
+
+  // PAGE DE GARDE
+  html+='<div style="background:linear-gradient(135deg,#0A5C44,#0F7A5A,#1D9E75);padding:48px 40px;color:#fff;page-break-after:always">';
+  html+='<div style="display:flex;align-items:center;gap:14px;margin-bottom:36px"><div style="width:52px;height:52px;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px">🛡️</div><div><div style="font-size:12px;opacity:0.8;letter-spacing:0.08em;text-transform:uppercase">Rapport d\'audit</div><div style="font-size:20px;font-weight:700">HACCP Manager</div></div></div>';
+  html+='<div style="font-size:30px;font-weight:700;margin-bottom:6px">'+etab+'</div>';
+  html+='<div style="font-size:15px;opacity:0.8;margin-bottom:36px">Cuisine pédagogique — Contrôle hygiène alimentaire</div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;background:rgba(255,255,255,0.12);border-radius:10px;overflow:hidden;margin-bottom:24px">';
+  html+='<div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.15)"><div style="font-size:10px;opacity:0.7;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Période</div><div style="font-weight:600">'+dateFrom+' — '+dateTo+'</div></div>';
+  html+='<div style="padding:14px 18px"><div style="font-size:10px;opacity:0.7;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Auditeur</div><div style="font-weight:600">'+auditeur+'</div></div>';
+  html+='<div style="padding:14px 18px;border-right:1px solid rgba(255,255,255,0.15);border-top:1px solid rgba(255,255,255,0.15)"><div style="font-size:10px;opacity:0.7;text-transform:uppercase;margin-bottom:3px">Référence</div><div style="font-weight:600">'+ref+'</div></div>';
+  html+='<div style="padding:14px 18px;border-top:1px solid rgba(255,255,255,0.15)"><div style="font-size:10px;opacity:0.7;text-transform:uppercase;margin-bottom:3px">Édition</div><div style="font-weight:600">'+today+'</div></div>';
+  html+='</div>';
+  html+='<div style="background:'+globalBg+';border-radius:10px;padding:18px 22px;display:inline-block">';
+  html+='<div style="font-size:10px;color:'+globalColor+';font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Score global de conformité</div>';
+  html+='<div style="font-size:44px;font-weight:700;color:'+globalColor+';line-height:1">'+globalScore+'<span style="font-size:20px">/100</span></div>';
+  html+='<div style="font-size:13px;font-weight:700;color:'+globalColor+';margin-top:4px">'+globalLabel+'</div></div></div>';
+
+  // INDICATEURS
+  html+='<div style="padding:28px 40px;page-break-after:always">';
+  html+='<div style="font-size:10px;color:#9AA3B8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px">Section 1</div>';
+  html+='<div style="font-size:22px;font-weight:700;color:#0F7A5A;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid #E3F5EE">Indicateurs clés</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">';
+  [{v:pctConf!==null?pctConf+'%':'—',l:'Taux conformité temp.',c:'#0F7A5A',bg:'#E3F5EE'},{v:temps.length,l:'Relevés de température',c:'#1A6FA8',bg:'#E8F1FB'},{v:ncs.length,l:'Non-conformités',c:'#C87C10',bg:'#FEF3E2'},{v:livs.length,l:'Livraisons contrôlées',c:'#6B3DB5',bg:'#F0EBFB'}].forEach(s=>{
+    html+='<div style="background:'+s.bg+';border-radius:8px;padding:14px;text-align:center"><div style="font-size:26px;font-weight:700;color:'+s.c+'">'+s.v+'</div><div style="font-size:10px;color:'+s.c+';margin-top:3px;font-weight:500">'+s.l+'</div></div>';
+  });
+  html+='</div>';
+  // Points forts / attention
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+  html+='<div style="background:#F5F6FA;border-radius:8px;padding:14px"><div style="font-size:11px;font-weight:600;color:#5A6377;text-transform:uppercase;margin-bottom:10px">Points forts</div>';
+  if(totalOK>0)html+='<div style="display:flex;gap:6px;margin-bottom:6px;font-size:12px"><span style="color:#0F7A5A">✓</span><span>'+totalOK+' relevé(s) conforme(s) ('+pctConf+'%)</span></div>';
+  if(ncs.filter(n=>n.statut==='closed').length>0)html+='<div style="display:flex;gap:6px;margin-bottom:6px;font-size:12px"><span style="color:#0F7A5A">✓</span><span>'+ncs.filter(n=>n.statut==='closed').length+' NC clôturée(s)</span></div>';
+  if(nets.filter(n=>n.result==='ok').length>0)html+='<div style="display:flex;gap:6px;font-size:12px"><span style="color:#0F7A5A">✓</span><span>'+nets.filter(n=>n.result==='ok').length+' nettoyage(s) conforme(s)</span></div>';
+  if(totalOK===0&&ncs.length===0)html+='<div style="font-size:11px;color:#9AA3B8">Données insuffisantes</div>';
+  html+='</div>';
+  html+='<div style="background:#F5F6FA;border-radius:8px;padding:14px"><div style="font-size:11px;font-weight:600;color:#5A6377;text-transform:uppercase;margin-bottom:10px">Points d\'attention</div>';
+  if(totalKO>0)html+='<div style="display:flex;gap:6px;margin-bottom:6px;font-size:12px"><span style="color:#D93025">✗</span><span>'+totalKO+' température(s) hors seuil</span></div>';
+  if(openNCs>0)html+='<div style="display:flex;gap:6px;margin-bottom:6px;font-size:12px"><span style="color:#D93025">✗</span><span>'+openNCs+' NC non clôturée(s)</span></div>';
+  if(critNCs>0)html+='<div style="display:flex;gap:6px;font-size:12px"><span style="color:#D93025">✗</span><span>'+critNCs+' NC critique(s)</span></div>';
+  if(totalKO===0&&openNCs===0)html+='<div style="font-size:11px;color:#9AA3B8">Aucun point critique</div>';
+  html+='</div></div></div>';
+
+  // AUDIT PAR ZONE
+  html+='<div style="padding:28px 40px;page-break-after:always">';
+  html+='<div style="font-size:10px;color:#9AA3B8;text-transform:uppercase;margin-bottom:3px">Section 2</div>';
+  html+='<div style="font-size:22px;font-weight:700;color:#0F7A5A;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid #E3F5EE">Audit par zone</div>';
+  html+='<table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#F5F6FA"><th style="padding:9px 10px;text-align:left;border:1px solid #E2E6EF">Zone</th><th style="padding:9px 10px;text-align:center;border:1px solid #E2E6EF">Score</th><th style="padding:9px 10px;text-align:center;border:1px solid #E2E6EF">Statut</th><th style="padding:9px 10px;text-align:center;border:1px solid #E2E6EF">Temp.</th><th style="padding:9px 10px;text-align:center;border:1px solid #E2E6EF">Nettoyages</th><th style="padding:9px 10px;text-align:center;border:1px solid #E2E6EF">NC</th><th style="padding:9px 10px;text-align:left;border:1px solid #E2E6EF">Observation</th></tr></thead><tbody>';
+  Object.entries(ZONES).forEach(function(entry){
+    var zid=entry[0],z=entry[1];
+    var s=scoreZone(zid);
+    var zt=D.temp.filter(function(t){return t.zone===zid;});
+    var zn=D.nettoyage.filter(function(n){return n.zone===zid;});
+    var znc=D.nc.filter(function(n){return n.zone===zid;});
+    var zko=zt.filter(function(t){return !tempOK(t.val,t.equip);}).length;
+    var obs='RAS';
+    if(s.score===null)obs='Non évaluée';
+    else if(zko>0)obs=zko+' hors seuil';
+    else if(znc.filter(function(n){return n.statut==='open';}).length>0)obs=znc.filter(function(n){return n.statut==='open';}).length+' NC ouverte(s)';
+    else if(s.score>=80)obs='Conformité satisfaisante';
+    html+='<tr><td style="padding:8px 10px;border:1px solid #E2E6EF;font-weight:500">'+z.icon+' '+z.label+'</td><td style="padding:8px 10px;border:1px solid #E2E6EF;text-align:center;font-weight:700;color:'+s.color+'">'+(s.score!==null?s.score+'/100':'—')+'</td><td style="padding:8px 10px;border:1px solid #E2E6EF;text-align:center"><span style="background:'+s.color+'25;color:'+s.color+';padding:2px 7px;border-radius:99px;font-size:10px;font-weight:600">'+s.label+'</span></td><td style="padding:8px 10px;border:1px solid #E2E6EF;text-align:center">'+(zt.length?zt.length+' ('+zko+' ❌)':'—')+'</td><td style="padding:8px 10px;border:1px solid #E2E6EF;text-align:center">'+(zn.length||'—')+'</td><td style="padding:8px 10px;border:1px solid #E2E6EF;text-align:center">'+(znc.length?'<span style="color:'+(znc.filter(function(n){return n.statut==="open";}).length>0?'#D93025':'#0F7A5A')+'">'+znc.length+'</span>':'—')+'</td><td style="padding:8px 10px;border:1px solid #E2E6EF;font-size:10px;color:#5A6377">'+obs+'</td></tr>';
+  });
+  html+='</tbody></table></div>';
+
+  // TEMPÉRATURES
+  html+='<div style="padding:28px 40px;page-break-after:always">';
+  html+='<div style="font-size:10px;color:#9AA3B8;text-transform:uppercase;margin-bottom:3px">Section 3</div>';
+  html+='<div style="font-size:22px;font-weight:700;color:#0F7A5A;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid #E3F5EE">Relevés de températures ('+temps.length+')</div>';
+  if(temps.length){
+    html+='<table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#F5F6FA"><th style="padding:7px 9px;border:1px solid #E2E6EF">Zone</th><th style="padding:7px 9px;border:1px solid #E2E6EF">Équipement</th><th style="padding:7px 9px;text-align:center;border:1px solid #E2E6EF">Temp.</th><th style="padding:7px 9px;text-align:center;border:1px solid #E2E6EF">Seuil</th><th style="padding:7px 9px;text-align:center;border:1px solid #E2E6EF">Statut</th><th style="padding:7px 9px;border:1px solid #E2E6EF">Date/Heure</th><th style="padding:7px 9px;border:1px solid #E2E6EF">Agent</th></tr></thead><tbody>';
+    temps.forEach(function(t){
+      var ok2=tempOK(t.val,t.equip);
+      var zl=t.zone&&ZONES[t.zone]?ZONES[t.zone].icon+' '+ZONES[t.zone].label:'—';
+      var seuil=t.equip&&(t.equip.includes('négatif')||t.equip.includes('Congélateur'))?'≤-18°C':t.equip&&t.equip.includes('Bain')?'≥63°C':'≤4°C';
+      html+='<tr style="background:'+(ok2?'#fff':'#FFF8F8')+'"><td style="padding:6px 9px;border:1px solid #E2E6EF">'+zl+'</td><td style="padding:6px 9px;border:1px solid #E2E6EF">'+t.equip+'</td><td style="padding:6px 9px;border:1px solid #E2E6EF;text-align:center;font-weight:700;color:'+(ok2?'#0F7A5A':'#D93025')+'">'+t.val+'°C</td><td style="padding:6px 9px;border:1px solid #E2E6EF;text-align:center;color:#5A6377">'+seuil+'</td><td style="padding:6px 9px;border:1px solid #E2E6EF;text-align:center">'+(ok2?'✅':'❌')+'</td><td style="padding:6px 9px;border:1px solid #E2E6EF">'+t.date+(t.heure?' '+t.heure:'')+'</td><td style="padding:6px 9px;border:1px solid #E2E6EF">'+t.agent+'</td></tr>';
+    });
+    html+='</tbody></table>';
+  } else html+='<div style="padding:14px;background:#F5F6FA;border-radius:8px;color:#5A6377">Aucun relevé sur cette période</div>';
+  html+='</div>';
+
+  // NC
+  html+='<div style="padding:28px 40px;page-break-after:always">';
+  html+='<div style="font-size:10px;color:#9AA3B8;text-transform:uppercase;margin-bottom:3px">Section 4</div>';
+  html+='<div style="font-size:22px;font-weight:700;color:#0F7A5A;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid #E3F5EE">Non-conformités ('+ncs.length+')</div>';
+  if(ncs.length){
+    html+='<table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#F5F6FA"><th style="padding:7px 9px;border:1px solid #E2E6EF">Zone</th><th style="padding:7px 9px;border:1px solid #E2E6EF">Type</th><th style="padding:7px 9px;text-align:center;border:1px solid #E2E6EF">Gravité</th><th style="padding:7px 9px;border:1px solid #E2E6EF">Description</th><th style="padding:7px 9px;border:1px solid #E2E6EF">Action</th><th style="padding:7px 9px;text-align:center;border:1px solid #E2E6EF">Statut</th></tr></thead><tbody>';
+    ncs.forEach(function(n){
+      var zl=n.zone&&ZONES[n.zone]?ZONES[n.zone].icon+' '+ZONES[n.zone].label:'—';
+      var gc={warn:'🟡 Mineure',err:'🟠 Majeure',critic:'🔴 Critique'}[n.grav]||n.grav;
+      var sc={open:'⏳ Ouverte',closed:'✅ Clôturée'}[n.statut]||n.statut;
+      html+='<tr style="background:'+(n.grav==='critic'?'#FFF0F0':n.grav==='err'?'#FFF5F5':'#fff')+'"><td style="padding:6px 9px;border:1px solid #E2E6EF">'+zl+'</td><td style="padding:6px 9px;border:1px solid #E2E6EF">'+n.type+'</td><td style="padding:6px 9px;border:1px solid #E2E6EF;text-align:center">'+gc+'</td><td style="padding:6px 9px;border:1px solid #E2E6EF;color:#5A6377">'+n.desc+'</td><td style="padding:6px 9px;border:1px solid #E2E6EF;color:#5A6377">'+(n.action||'—')+'</td><td style="padding:6px 9px;border:1px solid #E2E6EF;text-align:center">'+sc+'</td></tr>';
+    });
+    html+='</tbody></table>';
+  } else html+='<div style="padding:14px;background:#F5F6FA;border-radius:8px;color:#5A6377">Aucune NC sur cette période</div>';
+  html+='</div>';
+
+  // PRÉCONISATIONS + SIGNATURES
+  html+='<div style="padding:28px 40px">';
+  html+='<div style="font-size:10px;color:#9AA3B8;text-transform:uppercase;margin-bottom:3px">Section 5</div>';
+  html+='<div style="font-size:22px;font-weight:700;color:#0F7A5A;margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid #E3F5EE">Préconisations & Signatures</div>';
+  html+='<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:24px"><thead><tr style="background:#F5F6FA"><th style="padding:8px 10px;border:1px solid #E2E6EF">Priorité</th><th style="padding:8px 10px;border:1px solid #E2E6EF">Préconisation</th><th style="padding:8px 10px;border:1px solid #E2E6EF">Délai</th></tr></thead><tbody>';
+  if(critNCs>0)html+='<tr style="background:#FFF0F0"><td style="padding:7px 10px;border:1px solid #E2E6EF"><span style="background:#D93025;color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">URGENT</span></td><td style="padding:7px 10px;border:1px solid #E2E6EF">Traiter immédiatement les '+critNCs+' NC critique(s)</td><td style="padding:7px 10px;border:1px solid #E2E6EF;color:#D93025;font-weight:600">Immédiat</td></tr>';
+  if(totalKO>0)html+='<tr><td style="padding:7px 10px;border:1px solid #E2E6EF"><span style="background:#C87C10;color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">ÉLEVÉE</span></td><td style="padding:7px 10px;border:1px solid #E2E6EF">Analyser les causes des '+totalKO+' dépassement(s) de température</td><td style="padding:7px 10px;border:1px solid #E2E6EF">Sous 48h</td></tr>';
+  if(openNCs>0)html+='<tr><td style="padding:7px 10px;border:1px solid #E2E6EF"><span style="background:#C87C10;color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">ÉLEVÉE</span></td><td style="padding:7px 10px;border:1px solid #E2E6EF">Clôturer les '+openNCs+' NC ouverte(s) avec documentation des actions</td><td style="padding:7px 10px;border:1px solid #E2E6EF">Sous 7 jours</td></tr>';
+  html+='<tr><td style="padding:7px 10px;border:1px solid #E2E6EF"><span style="background:#1A6FA8;color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">STANDARD</span></td><td style="padding:7px 10px;border:1px solid #E2E6EF">Maintenir 2 relevés/jour pour les équipements frigorifiques</td><td style="padding:7px 10px;border:1px solid #E2E6EF">Continu</td></tr>';
+  html+='<tr><td style="padding:7px 10px;border:1px solid #E2E6EF"><span style="background:#1A6FA8;color:#fff;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">STANDARD</span></td><td style="padding:7px 10px;border:1px solid #E2E6EF">Session HACCP en début de chaque cycle de formation</td><td style="padding:7px 10px;border:1px solid #E2E6EF">Prochain cycle</td></tr>';
+  html+='</tbody></table>';
+  // Signatures
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:20px">';
+  [['Formateur / Responsable de cuisine',sn1,sig1],['Auditeur',sn2,sig2]].forEach(function(s){
+    html+='<div style="border:1px solid #E2E6EF;border-radius:8px;padding:16px">';
+    html+='<div style="font-size:10px;color:#9AA3B8;text-transform:uppercase;margin-bottom:10px">'+s[0]+'</div>';
+    html+='<div style="height:70px;border:1px dashed #CBD2DF;border-radius:6px;background:#FAFBFD;margin-bottom:8px;display:flex;align-items:center;justify-content:center;overflow:hidden">';
+    html+=s[2]?'<img src="'+s[2]+'" style="max-height:66px;max-width:100%;object-fit:contain">':'<span style="font-size:10px;color:#C5CBDA">Non enregistrée</span>';
+    html+='</div>';
+    html+='<div style="font-size:12px;font-weight:600">'+( s[1]||'—')+'</div>';
+    html+='<div style="font-size:10px;color:#9AA3B8;margin-top:2px">'+today+'</div></div>';
+  });
+  html+='</div>';
+  html+='<div style="padding-top:12px;border-top:1px solid #E2E6EF;display:flex;justify-content:space-between;font-size:10px;color:#9AA3B8">';
+  html+='<span>HACCP Manager — '+etab+'</span><span>Réf. : '+ref+'</span><span>Généré le '+today+'</span></div></div>';
+  html+='</div>';
+
+  document.getElementById('audit-body').innerHTML=html;
+  document.getElementById('audit-preview-card').style.display='block';
+  document.getElementById('audit-preview-card').scrollIntoView({behavior:'smooth'});
+  toast('Audit généré — '+temps.length+' relevés · '+ncs.length+' NC · '+nets.length+' nettoyages');
+}
+function printAudit(){const b=document.getElementById('audit-body');if(!b||!b.innerHTML){toast('Générez le rapport d\'abord','err');return;}window.print();}
+function genRapport(){genAudit();}
+function printRapport(){printAudit();}
+
+function initSig(n){const canvas=document.getElementById('sig-canvas-'+n);if(!canvas)return;const ctx=canvas.getContext('2d');let drawing=false,lx=0,ly=0;function getPos(e){const r=canvas.getBoundingClientRect();const src=e.touches?e.touches[0]:e;return{x:(src.clientX-r.left)*(canvas.width/r.width),y:(src.clientY-r.top)*(canvas.height/r.height)};}function start(e){e.preventDefault();drawing=true;const p=getPos(e);lx=p.x;ly=p.y;ctx.beginPath();ctx.arc(p.x,p.y,1,0,Math.PI*2);ctx.fillStyle='#0F7A5A';ctx.fill();}function move(e){e.preventDefault();if(!drawing)return;const p=getPos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.strokeStyle='#0F7A5A';ctx.lineWidth=2;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();lx=p.x;ly=p.y;}function stop(){drawing=false;}canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);canvas.addEventListener('mouseup',stop);canvas.addEventListener('mouseleave',stop);canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',stop);}
+function clearSig(n){const canvas=document.getElementById('sig-canvas-'+n);if(!canvas)return;canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);document.getElementById('sig-status-'+n).textContent='';try{localStorage.removeItem('haccpZ_sig'+n);}catch(e){}}
+function saveSig(n){const canvas=document.getElementById('sig-canvas-'+n);const name=document.getElementById('sig-name-'+n).value.trim();if(!name){toast('Saisissez le nom du signataire','err');return;}const data=canvas.toDataURL('image/png');try{localStorage.setItem('haccpZ_sig'+n,data);localStorage.setItem('haccpZ_signame'+n,name);}catch(e){}const now2=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});document.getElementById('sig-status-'+n).innerHTML=`<span style="color:var(--green-mid)"><i class="ti ti-circle-check"></i> Signé par <strong>${name}</strong> le ${now2}</span>`;renderSavedSigs();toast('Signature enregistrée');}
+function loadSigData(n){try{return localStorage.getItem('haccpZ_sig'+n)||null;}catch(e){return null;}}
+function renderSavedSigs(){const el=document.getElementById('sigs-saved');if(!el)return;const s1=loadSigData(1),s2=loadSigData(2);const n1=localStorage.getItem('haccpZ_signame1')||'',n2=localStorage.getItem('haccpZ_signame2')||'';if(!s1&&!s2){el.innerHTML='';return;}let html=`<div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px">Signatures enregistrées</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">`;[[s1,n1,'Formateur'],[s2,n2,'Stagiaire']].forEach(([s,n,lbl])=>{if(s)html+=`<div><div style="font-size:11px;color:var(--text2);margin-bottom:4px">${lbl} — ${n}</div><img src="${s}" style="border:1px solid var(--border2);border-radius:6px;width:100%;max-height:70px;object-fit:contain;background:#fafbfd"></div>`;});html+=`</div>`;el.innerHTML=html;}
+
+// ========== QR CODES (VERSION CORRIGÉE) ==========
+function saveQRSettings(){const url=document.getElementById('qr-base-url').value.trim();if(!url){toast('Saisissez une URL','err');return;}localStorage.setItem('haccpZ_qrbase',url);toast('URL enregistrée');loadQRPage();}
+function getQRBaseURL(){return localStorage.getItem('haccpZ_qrbase')||window.location.href.split('?')[0].split('#')[0];}
+function buildQRURL(zone,action){const base=getQRBaseURL();const sep=base.includes('?')?'&':'?';return base+sep+'zone='+encodeURIComponent(zone)+(action?'&action='+encodeURIComponent(action):'');}
+function makeQR(content){
+  // Vérifie que la lib QRCode (de qrcode-svg) est bien chargée
+  if(typeof QRCode==='undefined'){
+    return `<div style="color:red;font-size:10px;padding:8px;background:#fee;border-radius:4px">❌ Lib QR non chargée. Vérifiez votre connexion internet (le fichier charge qrcode-svg depuis un CDN).</div>`;
+  }
+  try{
+    const qr=new QRCode({content:content,padding:2,width:180,height:180,color:'#0F7A5A',background:'#ffffff',ecl:'M',join:true,container:'svg-viewbox'});
+    return qr.svg();
+  }catch(e){
+    return `<div style="color:red;font-size:10px">Erreur: ${e.message}</div>`;
+  }
+}
+function loadQRPage(){const el=document.getElementById('qr-grid');if(!el)return;document.getElementById('qr-base-url').value=getQRBaseURL();const actions=[{k:'temp',l:'🌡️ Température',c:'#4A90D9'},{k:'nettoyage',l:'🧹 Nettoyage',c:'#5BA85A'},{k:'nc',l:'⚠️ NC',c:'#D93025'}];let html='';Object.keys(ZONES).forEach(zid=>{const z=ZONES[zid];html+=`<div class="qr-zone-section"><div class="qr-zone-section-title" style="background:${z.color}20;color:${z.color}">${z.icon} ${z.label}</div><div class="qr-zone-section-actions">`;actions.forEach(a=>{const url=buildQRURL(zid,a.k);html+=`<div class="qr-card"><div>${makeQR(url)}</div><div class="qr-card-label">${a.l}</div><div class="qr-card-sub">${zid}</div></div>`;});html+=`</div></div>`;});el.innerHTML=html;}
+function printQRCodes(){window.print();}
+
+let alerteDismissed=false;
+const ALERT_SOUND=()=>{try{const a=new AudioContext(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.setValueAtTime(880,a.currentTime);o.frequency.setValueAtTime(660,a.currentTime+0.15);o.frequency.setValueAtTime(880,a.currentTime+0.3);g.gain.setValueAtTime(0.4,a.currentTime);g.gain.exponentialRampToConstantValue(0.001,a.currentTime+0.5);o.start();o.stop(a.currentTime+0.5);}catch(e){}};
+function checkAlertes(){if(alerteDismissed)return;const recent=D.temp.slice(-10);const ko=recent.filter(t=>!tempOK(t.val,t.equip));const banner=document.getElementById('alerte-banner');if(ko.length>0){const last=ko[ko.length-1];const zl=last.zone&&ZONES[last.zone]?ZONES[last.zone].icon+' '+ZONES[last.zone].label:'';document.getElementById('alerte-titre').textContent=`⚠️ Température hors seuil — ${last.equip}`;document.getElementById('alerte-detail').textContent=`${last.val}°C détecté${zl?' en '+zl:''} · ${last.date}`;banner.style.display='flex';ALERT_SOUND();}else banner.style.display='none';}
+function dismissAlerte(){alerteDismissed=true;document.getElementById('alerte-banner').style.display='none';}
+
+let rappelTimer=null;
+const EQUIPS_RAPPEL=['Réfrigérateur 1','Réfrigérateur 2','Congélateur','Chambre froide positive','Bain-marie'];
+function updateRappels(){renderRappelGrid();}
+function toggleRappels(){const active=document.getElementById('rappel-active').checked;const status=document.getElementById('rappel-status');if(active){scheduleRappels();status.innerHTML=`<span style="color:var(--green-mid)"><i class="ti ti-bell-ringing"></i> Rappels activés</span>`;}else{if(rappelTimer)clearInterval(rappelTimer);status.textContent='Rappels désactivés';}}
+function scheduleRappels(){if(rappelTimer)clearInterval(rappelTimer);const minutes=parseInt(document.getElementById('rappel-interval').value)||60;rappelTimer=setInterval(()=>{renderRappelGrid();fireRappel();},minutes*60*1000);}
+function fireRappel(){const overdue=getOverdueEquips();if(overdue.length>0){ALERT_SOUND();toast(`⏰ Rappel : ${overdue.length} relevé(s) en attente`,'warn');if('Notification' in window&&Notification.permission==='granted'){new Notification('HACCP — Rappel saisie',{body:`${overdue.length} équipement(s) non relevé(s)`});}}}
+function getOverdueEquips(){const intervalMin=parseInt(document.getElementById('rappel-interval')?.value||60);const now2=new Date();return EQUIPS_RAPPEL.filter(eq=>{const last=D.temp.filter(t=>t.equip===eq).slice(-1)[0];if(!last)return true;const parts=last.date.split(' ');const dp=parts[0].split('/');const hp=parts[1]?parts[1].split(':'):[0,0];const d=new Date(dp[2],dp[1]-1,dp[0],hp[0],hp[1]);return(now2-d)/60000>intervalMin;});}
+function renderRappelGrid(){const grid=document.getElementById('rappel-grid');if(!grid)return;const overdue=getOverdueEquips();grid.innerHTML=EQUIPS_RAPPEL.map(eq=>{const last=D.temp.filter(t=>t.equip===eq).slice(-1)[0];const isOK=last&&!overdue.includes(eq);const isOverdue=overdue.includes(eq);const lastStr=last?last.date+(last.heure?' · '+last.heure:''):'Jamais saisi';const ok2=last?tempOK(last.val,last.equip):null;return`<div style="background:${isOverdue?'var(--amber-light)':isOK?'var(--green-light)':'var(--surface2)'};border:1px solid ${isOverdue?'#F0C060':isOK?'#8FD9B8':'var(--border)'};border-radius:8px;padding:10px"><div style="font-size:12px;font-weight:600;margin-bottom:4px">${eq}</div><div style="font-size:11px;color:var(--text2)">${lastStr}</div>${last?`<div style="font-size:14px;font-weight:700;color:${ok2?'var(--green-mid)':'var(--red)'};margin-top:4px">${last.val}°C</div>`:''}<div style="margin-top:5px">${isOverdue?'<span style="font-size:10px;color:#7A4D0A;font-weight:600">⏰ À relever</span>':isOK?'<span style="font-size:10px;color:#085041;font-weight:600">✅ OK</span>':'<span style="font-size:10px;color:var(--text2)">—</span>'}</div></div>`;}).join('');}
+
+function drawGraphTemp(){const canvas=document.getElementById('graph-temp');const empty=document.getElementById('graph-temp-empty');if(!canvas)return;const ctx=canvas.getContext('2d');const filterEq=document.getElementById('graph-equip')?.value||'';const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d);}const dayLabels=days.map(d=>d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'}));const grouped=days.map(d=>{const iso=d.toISOString().slice(0,10);let items=D.temp.filter(t=>{if(!t.date)return false;const p=t.date.split(' ')[0].split('/');if(p.length<3)return false;return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0')===iso;});if(filterEq)items=items.filter(t=>t.equip===filterEq);return items;});const hasData=grouped.some(g=>g.length>0);if(!hasData){canvas.style.display='none';empty.style.display='block';return;}canvas.style.display='block';empty.style.display='none';const avgTemps=grouped.map(g=>g.length?+(g.reduce((s,t)=>s+t.val,0)/g.length).toFixed(1):null);const W=canvas.width=canvas.offsetWidth*window.devicePixelRatio||canvas.offsetWidth;const H=canvas.height=200*window.devicePixelRatio||200;canvas.style.height='200px';ctx.scale(window.devicePixelRatio,window.devicePixelRatio);const w=canvas.offsetWidth,h=200;ctx.clearRect(0,0,w,h);const allVals=avgTemps.filter(v=>v!==null);if(!allVals.length)return;const minV=Math.min(...allVals)-2,maxV=Math.max(...allVals)+2;const pad={t:10,r:10,b:30,l:36};const gw=w-pad.l-pad.r,gh=h-pad.t-pad.b;function yx(v){return pad.t+gh-(v-minV)/(maxV-minV)*gh;}function xx(i){return pad.l+i/(days.length-1)*gw;}ctx.strokeStyle='#E2E6EF';ctx.lineWidth=1;for(let i=0;i<=4;i++){const y=pad.t+i/4*gh;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+gw,y);ctx.stroke();const v=(maxV-(maxV-minV)*i/4).toFixed(1);ctx.fillStyle='#9AA3B8';ctx.font='10px system-ui';ctx.textAlign='right';ctx.fillText(v+'°',pad.l-4,y+3);}if(4>=minV&&4<=maxV){ctx.strokeStyle='rgba(217,48,37,0.4)';ctx.lineWidth=1;ctx.setLineDash([4,3]);const sy=yx(4);ctx.beginPath();ctx.moveTo(pad.l,sy);ctx.lineTo(pad.l+gw,sy);ctx.stroke();ctx.fillStyle='rgba(217,48,37,0.7)';ctx.font='10px system-ui';ctx.textAlign='left';ctx.fillText('4°C',pad.l+2,sy-3);ctx.setLineDash([]);}const pts=avgTemps.map((v,i)=>v!==null?{x:xx(i),y:yx(v)}:null).filter(p=>p);if(pts.length>1){const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+gh);grad.addColorStop(0,'rgba(29,158,117,0.25)');grad.addColorStop(1,'rgba(29,158,117,0)');ctx.beginPath();ctx.moveTo(pts[0].x,pad.t+gh);pts.forEach(p=>ctx.lineTo(p.x,p.y));ctx.lineTo(pts[pts.length-1].x,pad.t+gh);ctx.closePath();ctx.fillStyle=grad;ctx.fill();}ctx.strokeStyle='#1D9E75';ctx.lineWidth=2;ctx.setLineDash([]);ctx.beginPath();let first2=true;avgTemps.forEach((v,i)=>{if(v===null)return;first2?(ctx.moveTo(xx(i),yx(v)),first2=false):ctx.lineTo(xx(i),yx(v));});ctx.stroke();avgTemps.forEach((v,i)=>{if(v===null)return;ctx.beginPath();ctx.arc(xx(i),yx(v),4,0,Math.PI*2);ctx.fillStyle=v<=4?'#1D9E75':'#D93025';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();});ctx.fillStyle='#9AA3B8';ctx.font='10px system-ui';ctx.textAlign='center';dayLabels.forEach((l,i)=>ctx.fillText(l,xx(i),h-8));}
+function drawGraphZones(){const canvas=document.getElementById('graph-zones');if(!canvas)return;const ctx=canvas.getContext('2d');const zids=Object.keys(ZONES);const data=zids.map(zid=>{const items=D.temp.filter(t=>t.zone===zid);return{label:ZONES[zid].icon+' '+ZONES[zid].label.split('/')[0].trim(),total:items.length,ok:items.filter(t=>tempOK(t.val,t.equip)).length,ko:items.length-items.filter(t=>tempOK(t.val,t.equip)).length};}).filter(d=>d.total>0);const empty=document.getElementById('graph-zones-empty');if(!data.length){canvas.style.display='none';empty.style.display='block';return;}canvas.style.display='block';empty.style.display='none';const W=canvas.width=canvas.offsetWidth*window.devicePixelRatio||canvas.offsetWidth;const H=canvas.height=200*window.devicePixelRatio||200;canvas.style.height='200px';ctx.scale(window.devicePixelRatio,window.devicePixelRatio);const w=canvas.offsetWidth,h=200;ctx.clearRect(0,0,w,h);const pad={t:10,r:10,b:50,l:36};const gw=w-pad.l-pad.r,gh=h-pad.t-pad.b;const bw=Math.min(gw/data.length*0.5,30);const gap=gw/data.length;const maxV=Math.max(...data.map(d=>d.total));ctx.strokeStyle='#E2E6EF';for(let i=0;i<=4;i++){const y=pad.t+i/4*gh;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+gw,y);ctx.stroke();ctx.fillStyle='#9AA3B8';ctx.font='10px system-ui';ctx.textAlign='right';ctx.fillText(Math.round(maxV*(1-i/4)),pad.l-4,y+3);}data.forEach((d,i)=>{const cx=pad.l+i*gap+gap/2;const hOK=d.ok/maxV*gh;ctx.fillStyle='rgba(29,158,117,0.85)';ctx.beginPath();ctx.roundRect(cx-bw/2,pad.t+gh-hOK,bw,hOK,3);ctx.fill();if(d.ko>0){const hKO=d.ko/maxV*gh;ctx.fillStyle='rgba(217,48,37,0.7)';ctx.beginPath();ctx.roundRect(cx-bw/2,pad.t+gh-hOK-hKO,bw,hKO,3);ctx.fill();}ctx.fillStyle='#5A6377';ctx.font='9px system-ui';ctx.textAlign='center';const lbl=d.label.length>10?d.label.substring(0,10)+'…':d.label;ctx.fillText(lbl,cx,h-8);});}
+function drawGraphNC(){const canvas=document.getElementById('graph-nc');const legend=document.getElementById('graph-nc-legend');if(!canvas)return;const ctx=canvas.getContext('2d');const open=D.nc.filter(n=>n.statut==='open').length;const closed=D.nc.filter(n=>n.statut==='closed').length;const minor=D.nc.filter(n=>n.grav==='warn').length;const major=D.nc.filter(n=>n.grav==='err').length;const critic=D.nc.filter(n=>n.grav==='critic').length;const total=D.nc.length;ctx.clearRect(0,0,160,160);if(!total){ctx.fillStyle='#E2E6EF';ctx.beginPath();ctx.arc(80,80,60,0,Math.PI*2);ctx.fill();ctx.fillStyle='#9AA3B8';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('Aucune NC',80,84);legend.innerHTML='<span style="color:var(--text2)">Aucune NC déclarée</span>';return;}const slices=[{v:minor,c:'#C87C10',l:'Mineures'},{v:major,c:'#D93025',l:'Majeures'},{v:critic,c:'#7B0000',l:'Critiques'}].filter(s=>s.v>0);let start=-Math.PI/2;slices.forEach(s=>{const angle=(s.v/total)*Math.PI*2;ctx.beginPath();ctx.moveTo(80,80);ctx.arc(80,80,65,start,start+angle);ctx.closePath();ctx.fillStyle=s.c;ctx.fill();start+=angle;});ctx.beginPath();ctx.arc(80,80,35,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.fillStyle='#1A1D24';ctx.font='bold 18px system-ui';ctx.textAlign='center';ctx.fillText(total,80,78);ctx.fillStyle='#9AA3B8';ctx.font='10px system-ui';ctx.fillText('total',80,92);legend.innerHTML=`<div style="margin-bottom:6px"><strong>${open}</strong> ouverte${open>1?'s':''} · <strong style="color:var(--green-mid)">${closed}</strong> clôturée${closed>1?'s':''}</div>${slices.map(s=>`<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px"><div style="width:10px;height:10px;border-radius:2px;background:${s.c};flex-shrink:0"></div>${s.v} ${s.l}</div>`).join('')}`;}
+function drawGraphActivite(){const canvas=document.getElementById('graph-activite');if(!canvas)return;const ctx=canvas.getContext('2d');const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d);}const labels=days.map(d=>d.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'}));function countDay(arr,d){const iso=d.toISOString().slice(0,10);return arr.filter(it=>{if(!it.date)return false;const p=it.date.split(' ')[0].split('/');if(p.length<3)return false;return p[2]+'-'+p[1].padStart(2,'0')+'-'+p[0].padStart(2,'0')===iso;}).length;}const datasets=[{label:'Temp',data:days.map(d=>countDay(D.temp,d)),color:'#1D9E75'},{label:'Nettoyage',data:days.map(d=>countDay(D.nettoyage,d)),color:'#4A90D9'},{label:'NC',data:days.map(d=>countDay(D.nc,d)),color:'#D93025'}];const W=canvas.width=canvas.offsetWidth*window.devicePixelRatio||canvas.offsetWidth;const H=canvas.height=160*window.devicePixelRatio||160;canvas.style.height='160px';ctx.scale(window.devicePixelRatio,window.devicePixelRatio);const w=canvas.offsetWidth,h=160;ctx.clearRect(0,0,w,h);const pad={t:10,r:60,b:30,l:24};const gw=w-pad.l-pad.r,gh=h-pad.t-pad.b;const maxV=Math.max(...datasets.flatMap(d=>d.data),1);const gap=gw/(days.length-1);ctx.strokeStyle='#E2E6EF';for(let i=0;i<=4;i++){const y=pad.t+i/4*gh;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+gw,y);ctx.stroke();}datasets.forEach(ds=>{ctx.strokeStyle=ds.color;ctx.lineWidth=2;ctx.setLineDash([]);ctx.beginPath();let f=true;ds.data.forEach((v,i)=>{const x=pad.l+i*gap,y=pad.t+gh-(v/maxV*gh);f?(ctx.moveTo(x,y),f=false):ctx.lineTo(x,y);});ctx.stroke();ds.data.forEach((v,i)=>{ctx.beginPath();ctx.arc(pad.l+i*gap,pad.t+gh-(v/maxV*gh),3,0,Math.PI*2);ctx.fillStyle=ds.color;ctx.fill();});});ctx.fillStyle='#9AA3B8';ctx.font='9px system-ui';ctx.textAlign='center';labels.forEach((l,i)=>ctx.fillText(l,pad.l+i*gap,h-6));datasets.forEach((ds,i)=>{const lx=w-pad.r+6,ly=pad.t+15+i*22;ctx.fillStyle=ds.color;ctx.beginPath();ctx.roundRect(lx,ly-8,12,4,2);ctx.fill();ctx.fillStyle='#5A6377';ctx.font='10px system-ui';ctx.textAlign='left';ctx.fillText(ds.label,lx+16,ly);});}
+function drawAllGraphs(){drawGraphTemp();drawGraphZones();drawGraphNC();drawGraphActivite();}
+
+function handleURLParams(){
+  const p=new URLSearchParams(window.location.search);
+  const zone=p.get('zone');
+  const action=p.get('action');
+  if(zone&&ZONES[zone]){
+    show('carto',document.querySelector('.nb'));
+    setTimeout(()=>{
+      selectZone(zone);
+      if(action==='temp')openModal('temp',zone);
+      else if(action==='nettoyage')openModal('nettoyage',zone);
+      else if(action==='nc')openModal('nc',zone);
+    },100);
+  }
+}
+
+// ========== INIT ==========
+clock();setInterval(clock,30000);
+Object.keys(D).forEach(k=>render(k));
+updateStats();
+
+// Auto-redirect depuis scan QR
+if(window._qrZone||window._qrAction){
+  const z=window._qrZone, a=window._qrAction;
+  setTimeout(()=>{
+    // Aller sur cartographie et sélectionner la zone
+    if(z&&ZONES[z]){
+      const cartoBtn=document.querySelector('.nb');
+      if(cartoBtn){show('carto',cartoBtn);}
+      setTimeout(()=>{
+        selectZone(z);
+        if(a){
+          setTimeout(()=>openModal(a,z),300);
+        }
+        toast('📱 Zone '+ZONES[z].label+' sélectionnée','ok');
+      },200);
+    }
+  },300);
+}
+
+const today=new Date().toISOString().slice(0,10);
+document.getElementById('rapport-date').value=today;
+document.getElementById('sig-date-label').textContent=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+
+setTimeout(()=>{initSig(1);initSig(2);renderSavedSigs();renderRappelGrid();handleURLParams();},100);
+
+const styleEl=document.createElement('style');
+styleEl.textContent=`@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}`;
+document.head.appendChild(styleEl);
+
+if('Notification' in window&&Notification.permission==='default'){Notification.requestPermission();}
+
+// ===== FAB SAISIE RAPIDE =====
+function toggleFAB(){
+  const menu=document.getElementById('fab-menu');
+  const btn=document.getElementById('fab-btn');
+  const open=menu.style.display==='flex';
+  menu.style.display=open?'none':'flex';
+  btn.innerHTML=open?'<i class="ti ti-plus"></i>':'<i class="ti ti-x"></i>';
+}
+function fabAction(type){
+  toggleFAB();
+  if(selectedZone){
+    openModal(type,selectedZone);
+  } else {
+    const tabMap={temp:'temp',nettoyage:'nettoyage',nc:'nc',livraison:'livraison'};
+    const tabId=tabMap[type];
+    const allBtns=document.querySelectorAll('.nb');
+    allBtns.forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+tabId+"'"))show(tabId,b);});
+    setTimeout(()=>{const form=document.querySelector('#'+tabId+' .card');if(form)form.scrollIntoView({behavior:'smooth',block:'start'});},100);
+  }
+}
+// Fermer FAB en cliquant ailleurs
+document.addEventListener('click',e=>{
+  const menu=document.getElementById('fab-menu');
+  const btn=document.getElementById('fab-btn');
+  if(menu&&menu.style.display==='flex'&&!menu.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){
+    menu.style.display='none';
+    btn.innerHTML='<i class="ti ti-plus"></i>';
+  }
+});
+
+// ===== FRAÎCHEUR DES DONNÉES =====
+function updateFreshness(){
+  const el=document.getElementById('hdr-freshness');
+  if(!el)return;
+  if(!D.temp.length){el.innerHTML='<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.35);margin-right:4px;vertical-align:middle"></span>Aucun relevé';return;}
+  const last=D.temp[D.temp.length-1];
+  const parts=last.date.split(' ');
+  const dp=parts[0].split('/');
+  const hp=parts[1]?parts[1].split(':'):[0,0];
+  const d=new Date(dp[2],dp[1]-1,dp[0],parseInt(hp[0]),parseInt(hp[1]));
+  const diffMin=Math.round((new Date()-d)/60000);
+  let color='#6EE7B7',label='';
+  if(diffMin<60){label='Dernière saisie il y a '+diffMin+'min';color='#6EE7B7';}
+  else if(diffMin<240){label='Dernière saisie il y a '+Math.round(diffMin/60)+'h';color='#FCD34D';}
+  else{label='⚠️ Dernière saisie il y a '+Math.round(diffMin/60)+'h';color='#FCA5A5';}
+  el.innerHTML='<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+color+';margin-right:4px;vertical-align:middle"></span>'+label;
+}
+updateFreshness();
+setInterval(updateFreshness,60000);
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('service-worker.js').catch(()=>{});});}
+const savedPin=localStorage.getItem('haccpZ_pin');if(savedPin&&document.getElementById('formateur-pin'))document.getElementById('formateur-pin').value=savedPin;
+renderFormateurStatus();
+
+setTimeout(()=>{document.querySelectorAll('.zone-area').forEach(el=>{el.addEventListener('click',function(e){e.stopPropagation();const zid=this.getAttribute('data-zone');if(zid)selectZone(zid);});});},50);
+</script>
+</body>
+</html>
